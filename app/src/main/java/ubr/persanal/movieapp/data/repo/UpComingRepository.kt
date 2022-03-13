@@ -23,7 +23,6 @@ class UpComingRepository @Inject constructor(private val apiInterface: ApiInterf
                 emit(DataState.Error(response.message()))
 
         } catch (e: Exception) {
-
             e.printStackTrace()
         }
 

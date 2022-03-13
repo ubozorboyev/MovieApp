@@ -12,5 +12,25 @@
         android:label="BottomNavigationFragment"
         tools:layout="@layout/bottom_navigation_fragment" />
 
+    <fragment
+        android:id="@+id/aboutMovieFragment"
+        android:name="ubr.persanal.movieapp.ui.movie.AboutMovieFragment"
+        android:label="AboutMovieFragment"
+        tools:layout="@layout/about_movie_fragment" />
+
+    <fragment
+        android:id="@+id/actorsFragment"
+        android:name="ubr.persanal.movieapp.ui.movie.actors.ActorsFragment"
+        android:label="ActorsFragment"
+        tools:layout="@layout/fragment_actors">
+
+        <action
+            android:id="@+id/action_actorsFragment_to_aboutMovieFragment"
+            app:destination="@id/aboutMovieFragment"
+            app:popUpTo="@id/aboutMovieFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
 
 </navigation>

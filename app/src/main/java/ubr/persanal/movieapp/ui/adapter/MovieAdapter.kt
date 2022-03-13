@@ -5,14 +5,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
 import com.bumptech.glide.Glide
+import ubr.persanal.movieapp.common.BaseInterface
 import ubr.persanal.movieapp.common.Common
 import ubr.persanal.movieapp.data.model.MovieItemData
 import ubr.persanal.movieapp.databinding.ItemMovieBinding
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
-class MovieAdapter : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
+class MovieAdapter(val baseInterface: BaseInterface) :
+    RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
 
     private val dataList = arrayListOf<MovieItemData>()
 
@@ -20,14 +25,24 @@ class MovieAdapter : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
         RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind(data: MovieItemData) {
+
             itemBinding.apply {
                 movieName.text = data.title
                 movieOverview.text = data.overview
-                realiseDate.text = data.release_date
+                realiseDate.text = data.release_date.replace('-','.')
+                progressRating.setProgress(data.vote_average * 10, 100.0)
+                progressRating.setProgressTextAdapter(CircularProgressIndicator.ProgressTextAdapter {
+                    return@ProgressTextAdapter "${it.toInt()} %"
+                })
+
             }
 
             Glide.with(itemBinding.root).load(Common.IMAGE_URL + data.poster_path)
                 .into(itemBinding.itemImage)
+
+            itemBinding.root.setOnClickListener {
+                baseInterface.movieItemClick(data.id)
+            }
 
         }
 

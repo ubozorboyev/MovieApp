@@ -6,7 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ubr.persanal.movieapp.R
+import ubr.persanal.movieapp.common.BaseInterface
 import ubr.persanal.movieapp.databinding.FragmentTopRatedBinding
 import ubr.persanal.movieapp.ui.adapter.MovieAdapter
 import ubr.persanal.movieapp.ui.upcoming.UpComingViewModel
@@ -14,11 +18,11 @@ import ubr.persanal.movieapp.util.DataState
 import ubr.persanal.movieapp.util.toast
 
 @AndroidEntryPoint
-class TopRatedFragment : Fragment() {
+class TopRatedFragment : Fragment() , BaseInterface {
 
     private lateinit var binding: FragmentTopRatedBinding
     val viewModel by viewModels<TopRatedViewModel>()
-    private val adapter = MovieAdapter()
+    private val adapter = MovieAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,5 +57,12 @@ class TopRatedFragment : Fragment() {
         }
     }
 
+    override fun movieItemClick(movieId: Int) {
+        val bundle = Bundle()
+        bundle.putInt("MOVIE_ID",movieId)
+        val navController =
+            Navigation.findNavController(requireActivity(), R.id.navigation_main_host)
+        navController.navigate(R.id.aboutMovieFragment,bundle)
+    }
 
 }

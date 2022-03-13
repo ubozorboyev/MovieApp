@@ -2,10 +2,7 @@ package ubr.persanal.onlineshop.data.api
 
 import retrofit2.Response
 import retrofit2.http.*
-import ubr.persanal.movieapp.data.model.PopularMovieResponse
-import ubr.persanal.movieapp.data.model.RequestTokenData
-import ubr.persanal.movieapp.data.model.TopRatedResponse
-import ubr.persanal.movieapp.data.model.UpComingResponse
+import ubr.persanal.movieapp.data.model.*
 
 interface ApiInterface {
 
@@ -34,6 +31,30 @@ interface ApiInterface {
         @Query("api_key") api_key: String
     ): Response<UpComingResponse>
 
+
+    @GET("3/movie/{id}")
+    suspend fun getMovieDetails(
+        @Path("id") movieId: Int,
+        @Query("api_key") api_key: String
+    ): Response<MovieDetailsResponse>
+
+    @GET("3/movie/{id}/credits")
+    suspend fun getMovieActors(
+        @Path("id") movieId: Int,
+        @Query("api_key") api_key: String
+    ): Response<MovieActorsResponse>
+
+    @GET("3/person/{person_id}/movie_credits")
+    suspend fun getMoviesByActor(
+        @Path("person_id") personId: Int,
+        @Query("api_key") api_key: String
+    ): Response<MoviesByActorResponse>
+
+    @GET("3/person/{person_id}")
+    suspend fun getPersonDetails(
+        @Path("person_id") personId: Int,
+        @Query("api_key") api_key: String
+    ): Response<PersonDetailResponse>
 
 }
 
