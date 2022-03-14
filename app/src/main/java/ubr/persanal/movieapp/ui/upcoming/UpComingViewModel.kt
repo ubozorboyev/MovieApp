@@ -1,5 +1,6 @@
 package ubr.persanal.movieapp.ui.upcoming
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,16 +18,18 @@ import javax.inject.Inject
 class UpComingViewModel @Inject constructor(private val repository: UpComingRepository) :
     ViewModel() {
 
+
     private val _dataList: MutableLiveData<DataState<UpComingResponse>> =
         MutableLiveData()
     val dataList: LiveData<DataState<UpComingResponse>> = _dataList
 
 
     init {
+        Log.d("ViewModel", "UpComingViewModel: ")
         fetchData()
     }
 
-    private fun fetchData() {
+     fun fetchData() {
         viewModelScope.launch {
             repository.getUpComingFilms().collect {
                 _dataList.postValue(it)

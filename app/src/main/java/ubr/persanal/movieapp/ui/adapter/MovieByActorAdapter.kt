@@ -46,6 +46,7 @@ class MovieByActorAdapter(private val baseInterface: BaseInterface) :
     }
 
     fun setData(ls: List<MovieDataByActor>) {
+        dataList.clear()
         dataList.addAll(ls)
         notifyDataSetChanged()
     }

@@ -1,5 +1,6 @@
 package ubr.persanal.movieapp.ui.top
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,9 +24,11 @@ class TopRatedViewModel @Inject constructor(private val repository: TopRatedRepo
 
     init {
         fetchData()
+        Log.d("ViewModel", "TopRatedViewModel: ")
+
     }
 
-    private fun fetchData() {
+     fun fetchData() {
         viewModelScope.launch {
             repository.getTopRatedFilms().collect {
                 _dataList.postValue(it)

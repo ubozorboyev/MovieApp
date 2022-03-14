@@ -10,7 +10,8 @@
         android:id="@+id/bottomNavigationFragment"
         android:name="ubr.persanal.movieapp.ui.BottomNavigationFragment"
         android:label="BottomNavigationFragment"
-        tools:layout="@layout/bottom_navigation_fragment" />
+        tools:layout="@layout/bottom_navigation_fragment" >
+    </fragment>
 
     <fragment
         android:id="@+id/aboutMovieFragment"

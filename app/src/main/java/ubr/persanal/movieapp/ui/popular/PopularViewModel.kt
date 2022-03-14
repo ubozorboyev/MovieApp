@@ -1,5 +1,6 @@
 package ubr.persanal.movieapp.ui.popular
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,9 +26,10 @@ class PopularViewModel @Inject constructor(private val repository: PopularReposi
 
     init {
         fetchData()
+        Log.d("ViewModel", "PopularViewModel: ")
     }
 
-    private fun fetchData() {
+     fun fetchData() {
         viewModelScope.launch {
             repository.getPoplarFilms().collect {
                 _dataList.postValue(it)
@@ -35,5 +37,6 @@ class PopularViewModel @Inject constructor(private val repository: PopularReposi
 
         }
     }
+
 
 }

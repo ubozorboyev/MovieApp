@@ -34,7 +34,10 @@ class UpComingFragment : Fragment(), BaseInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.recyclerView.adapter = adapter
-
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            adapter.clearList()
+            viewModel.fetchData()
+        }
         viewModel.dataList.observe(viewLifecycleOwner) {
 
             when (it) {
@@ -42,12 +45,14 @@ class UpComingFragment : Fragment(), BaseInterface {
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is DataState.ResponseData -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
                     binding.progressBar.visibility = View.INVISIBLE
                     it.data?.let {
                         adapter.setData(it.results)
                     }
                 }
                 is DataState.Error -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
                     binding.progressBar.visibility = View.INVISIBLE
                     it.message?.toast(requireContext())
                 }
@@ -62,6 +67,11 @@ class UpComingFragment : Fragment(), BaseInterface {
         val navController =
             Navigation.findNavController(requireActivity(), R.id.navigation_main_host)
         navController.navigate(R.id.aboutMovieFragment, bundle)
+    }
+
+    override fun onDestroy() {
+        binding.recyclerView.adapter = null
+        super.onDestroy()
     }
 
 }

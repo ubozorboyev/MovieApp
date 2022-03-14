@@ -1,6 +1,7 @@
 package ubr.persanal.movieapp.ui.popular
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ class PopularFragment : Fragment(), BaseInterface {
     val viewModel by viewModels<PopularViewModel>()
 
     private val adapter = MovieAdapter(this)
+    private  val TAG = "PopularFragment"
 
 
     override fun onCreateView(
@@ -33,6 +35,7 @@ class PopularFragment : Fragment(), BaseInterface {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d(TAG, "onCreateView: ")
         binding = FragmentPopularBinding.inflate(inflater)
         return binding.root
     }
@@ -41,6 +44,12 @@ class PopularFragment : Fragment(), BaseInterface {
 
         binding.recyclerView.adapter = adapter
 
+        Log.d(TAG, "onViewCreated: ")
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            adapter.clearList()
+            viewModel.fetchData()
+        }
+
         viewModel.dataList.observe(viewLifecycleOwner) {
 
             when (it) {
@@ -48,12 +57,14 @@ class PopularFragment : Fragment(), BaseInterface {
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is DataState.ResponseData -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
                     binding.progressBar.visibility = View.INVISIBLE
                     it.data?.let {
                         adapter.setData(it.results)
                     }
                 }
                 is DataState.Error -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
                     binding.progressBar.visibility = View.INVISIBLE
                     it.message?.toast(requireContext())
                 }
@@ -64,10 +75,18 @@ class PopularFragment : Fragment(), BaseInterface {
 
     override fun movieItemClick(movieId: Int) {
         val bundle = Bundle()
-        bundle.putInt("MOVIE_ID",movieId)
+        bundle.putInt("MOVIE_ID", movieId)
         val navController =
             Navigation.findNavController(requireActivity(), R.id.navigation_main_host)
-        navController.navigate(R.id.aboutMovieFragment,bundle)
+        navController.navigate(R.id.aboutMovieFragment, bundle)
+    }
+
+    
+    
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy: ")
+        binding.recyclerView.adapter = null
+        super.onDestroy()
     }
 
 }

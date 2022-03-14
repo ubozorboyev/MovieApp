@@ -55,6 +55,7 @@ class ActorsAdapter(private val baseInterface: BaseInterface) :
     }
 
     fun setData(ls: List<ActorItemData>) {
+        dataList.clear()
         dataList.addAll(ls)
         notifyDataSetChanged()
     }

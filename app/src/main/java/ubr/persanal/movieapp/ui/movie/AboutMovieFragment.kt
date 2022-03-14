@@ -1,5 +1,6 @@
 package ubr.persanal.movieapp.ui.movie
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -85,6 +86,13 @@ class AboutMovieFragment : Fragment(), BaseInterface {
 
     private fun setDetail(data: MovieDetailsResponse) {
         try {
+            binding.movieVote.text = data.vote_count.toString()
+            binding.progressRating.setProgress(data.vote_average * 10, 100.0)
+            if (data.vote_average.toInt() * 10 >= 70) {
+                binding.progressRating.dotColor = Color.parseColor("#09A193")
+                binding.progressRating.progressColor = Color.parseColor("#09A193")
+                binding.progressRating.progressBackgroundColor = Color.parseColor("#8009A193")
+            }
             binding.toolBar.title = data.title
             binding.movieOverview.text = data.overview
 

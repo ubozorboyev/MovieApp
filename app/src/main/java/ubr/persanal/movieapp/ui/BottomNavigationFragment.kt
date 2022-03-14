@@ -5,16 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavGraph
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.BottomNavigationFragmentBinding
+import ubr.persanal.movieapp.ui.popular.PopularFragment
+import ubr.persanal.movieapp.ui.top.TopRatedFragment
+import ubr.persanal.movieapp.ui.upcoming.UpComingFragment
+
 
 @AndroidEntryPoint
 class BottomNavigationFragment : Fragment() {
 
     private lateinit var binding: BottomNavigationFragmentBinding
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,14 +36,34 @@ class BottomNavigationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding.bottomNavigationView.setupWithNavController(
-            Navigation.findNavController(
-                requireActivity(),
-                R.id.navigation_bottom_host
+        val navController =
+            Navigation.findNavController(requireActivity(), R.id.navigation_bottom_host)
+
+
+        binding.bottomNavigationView.setupWithNavController(navController)
+
+        val navOptions: NavOptions = NavOptions.Builder()
+            .setLaunchSingleTop(true)
+            .setRestoreState(true)
+            .setPopUpTo(
+                navController.graph.startDestinationId,
+                false,
+                true
             )
-        )
+            .build()
+
+
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            navController.navigate(item.itemId, null, navOptions)
+            true
+        }
+
+
+
+
+
+//        binding.bottomNavigationView.setOnItemReselectedListener { }
+
     }
-
-
 
 }

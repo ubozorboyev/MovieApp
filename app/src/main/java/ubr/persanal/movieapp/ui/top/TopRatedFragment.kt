@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.common.BaseInterface
@@ -18,7 +20,7 @@ import ubr.persanal.movieapp.util.DataState
 import ubr.persanal.movieapp.util.toast
 
 @AndroidEntryPoint
-class TopRatedFragment : Fragment() , BaseInterface {
+class TopRatedFragment : Fragment(), BaseInterface {
 
     private lateinit var binding: FragmentTopRatedBinding
     val viewModel by viewModels<TopRatedViewModel>()
@@ -35,7 +37,7 @@ class TopRatedFragment : Fragment() , BaseInterface {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.recyclerView.adapter = adapter
+        initViews()
 
         viewModel.dataList.observe(viewLifecycleOwner) {
 
@@ -44,12 +46,14 @@ class TopRatedFragment : Fragment() , BaseInterface {
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is DataState.ResponseData -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
                     binding.progressBar.visibility = View.INVISIBLE
                     it.data?.let {
                         adapter.setData(it.results)
                     }
                 }
                 is DataState.Error -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
                     binding.progressBar.visibility = View.INVISIBLE
                     it.message?.toast(requireContext())
                 }
@@ -57,12 +61,32 @@ class TopRatedFragment : Fragment() , BaseInterface {
         }
     }
 
+    private fun initViews() {
+        binding.recyclerView.adapter = adapter
+        val layoutManager = LinearLayoutManager(requireContext())
+
+        binding.recyclerView.layoutManager = layoutManager
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            adapter.clearList()
+            viewModel.fetchData()
+        }
+
+
+    }
+
+
     override fun movieItemClick(movieId: Int) {
         val bundle = Bundle()
-        bundle.putInt("MOVIE_ID",movieId)
+        bundle.putInt("MOVIE_ID", movieId)
         val navController =
             Navigation.findNavController(requireActivity(), R.id.navigation_main_host)
-        navController.navigate(R.id.aboutMovieFragment,bundle)
+        navController.navigate(R.id.aboutMovieFragment, bundle)
+    }
+
+    override fun onDestroy() {
+        binding.recyclerView.adapter = null
+        super.onDestroy()
     }
 
 }

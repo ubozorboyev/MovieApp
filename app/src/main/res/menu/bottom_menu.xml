@@ -3,14 +3,17 @@
 
     <item
         android:id="@+id/popularFragment"
+        android:icon="@android:drawable/btn_star"
         android:title="Popular" />
 
     <item
         android:id="@+id/topRatedFragment"
+        android:icon="@drawable/ic_top_rate"
         android:title="Top Rated" />
 
     <item
         android:id="@+id/upComingFragment"
+        android:icon="@drawable/ic_upcoming"
         android:title="Upcoming" />
 
 </menu>

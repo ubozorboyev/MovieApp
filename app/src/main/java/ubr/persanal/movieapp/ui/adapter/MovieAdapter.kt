@@ -1,6 +1,8 @@
 package ubr.persanal.movieapp.ui.adapter
 
+import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
@@ -21,6 +23,10 @@ class MovieAdapter(val baseInterface: BaseInterface) :
 
     private val dataList = arrayListOf<MovieItemData>()
 
+    init {
+        Log.d("PopularFragment", "init: tag ")
+    }
+
     inner class ViewHolder(private val itemBinding: ItemMovieBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {
 
@@ -29,12 +35,21 @@ class MovieAdapter(val baseInterface: BaseInterface) :
             itemBinding.apply {
                 movieName.text = data.title
                 movieOverview.text = data.overview
-                realiseDate.text = data.release_date.replace('-','.')
+                realiseDate.text = data.release_date.replace('-', '.')
                 progressRating.setProgress(data.vote_average * 10, 100.0)
                 progressRating.setProgressTextAdapter(CircularProgressIndicator.ProgressTextAdapter {
                     return@ProgressTextAdapter "${it.toInt()} %"
                 })
+            }
 
+            if (data.vote_average.toInt() * 10 >= 70) {
+                itemBinding.progressRating.dotColor = Color.parseColor("#09A193")
+                itemBinding.progressRating.progressColor = Color.parseColor("#09A193")
+                itemBinding.progressRating.progressBackgroundColor = Color.parseColor("#8009A193")
+            } else {
+                itemBinding.progressRating.dotColor = Color.parseColor("#FFC001")
+                itemBinding.progressRating.progressColor = Color.parseColor("#FFC001")
+                itemBinding.progressRating.progressBackgroundColor = Color.parseColor("#80FFC001")
             }
 
             Glide.with(itemBinding.root).load(Common.IMAGE_URL + data.poster_path)
@@ -43,10 +58,7 @@ class MovieAdapter(val baseInterface: BaseInterface) :
             itemBinding.root.setOnClickListener {
                 baseInterface.movieItemClick(data.id)
             }
-
         }
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -67,7 +79,13 @@ class MovieAdapter(val baseInterface: BaseInterface) :
     }
 
     fun setData(list: List<MovieItemData>) {
+        dataList.clear()
         dataList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun clearList(){
+        dataList.clear()
         notifyDataSetChanged()
     }
 
