@@ -16,7 +16,9 @@ import ubr.persanal.movieapp.data.model.PersonDetailResponse
 import ubr.persanal.movieapp.databinding.FragmentActorsBinding
 import ubr.persanal.movieapp.ui.adapter.MovieByActorAdapter
 import ubr.persanal.movieapp.util.DataState
+import ubr.persanal.movieapp.util.getDateFrom
 import ubr.persanal.movieapp.util.showSnack
+import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
 class ActorsFragment : Fragment(), BaseInterface {
@@ -87,9 +89,9 @@ class ActorsFragment : Fragment(), BaseInterface {
 
         binding.toolBar.title = data.name
         binding.actorBiography.text = data.biography
-        binding.birthday.text = data.birthday
+        binding.birthday.text = data.birthday.getDateFrom()
         binding.knownFor.text = data.known_for_department
-        binding.placeOfBirth.text = data.place_of_birth
+        binding.placeOfBirth.text = data.place_of_birth.trimStart()
 
         Glide.with(requireActivity()).load(Common.IMAGE_URL + data.profile_path)
             .placeholder(R.drawable.avatar)

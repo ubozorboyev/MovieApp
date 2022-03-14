@@ -13,6 +13,7 @@ import ubr.persanal.movieapp.common.BaseInterface
 import ubr.persanal.movieapp.common.Common
 import ubr.persanal.movieapp.data.model.MovieItemData
 import ubr.persanal.movieapp.databinding.ItemMovieBinding
+import ubr.persanal.movieapp.util.getDateFrom
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,7 +36,7 @@ class MovieAdapter(val baseInterface: BaseInterface) :
             itemBinding.apply {
                 movieName.text = data.title
                 movieOverview.text = data.overview
-                realiseDate.text = data.release_date.replace('-', '.')
+                realiseDate.text = data.release_date.getDateFrom()
                 progressRating.setProgress(data.vote_average * 10, 100.0)
                 progressRating.setProgressTextAdapter(CircularProgressIndicator.ProgressTextAdapter {
                     return@ProgressTextAdapter "${it.toInt()} %"
