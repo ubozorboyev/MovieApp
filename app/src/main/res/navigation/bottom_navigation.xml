@@ -24,5 +24,11 @@
         android:label="UpComingFragment"
         tools:layout="@layout/fragment_upcoming" />
 
+    <fragment
+        android:id="@+id/favoriteFragment"
+        tools:layout="@layout/fragment_favorite"
+        android:name="ubr.persanal.movieapp.ui.screen.favorite.FavoriteFragment"
+        android:label="FavoriteFragment" />
+
 
 </navigation>

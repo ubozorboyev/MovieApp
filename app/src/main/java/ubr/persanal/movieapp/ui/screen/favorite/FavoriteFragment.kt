@@ -1,4 +1,4 @@
-package ubr.persanal.movieapp.ui.screen.upcoming
+package ubr.persanal.movieapp.ui.screen.favorite
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,17 +9,19 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import ubr.persanal.movieapp.R
-import ubr.persanal.movieapp.databinding.FragmentUpcomingBinding
+import ubr.persanal.movieapp.databinding.FragmentFavoriteBinding
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
 
 @AndroidEntryPoint
-class UpComingFragment : Fragment(), MoviesPagingAdapter.Callback {
+class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
-    private lateinit var binding: FragmentUpcomingBinding
 
-    private val viewModel by viewModels<UpComingViewModel>()
+    private lateinit var binding: FragmentFavoriteBinding
+
+    private val viewModel by viewModels<FavoriteViewModel>()
 
     private val adapter = MoviesPagingAdapter(this)
 
@@ -28,7 +30,7 @@ class UpComingFragment : Fragment(), MoviesPagingAdapter.Callback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentUpcomingBinding.inflate(inflater)
+        binding = FragmentFavoriteBinding.inflate(inflater)
         return binding.root
     }
 
@@ -41,7 +43,8 @@ class UpComingFragment : Fragment(), MoviesPagingAdapter.Callback {
 
         }
 
-        lifecycleScope.launchWhenCreated {
+
+        lifecycleScope.launch {
 
             viewModel.upComingListPager.collect {
 
@@ -72,8 +75,7 @@ class UpComingFragment : Fragment(), MoviesPagingAdapter.Callback {
     }
 
     override fun saveToFavorite(dto: MoviePageItemDto) {
-        
-    }
 
+    }
 
 }

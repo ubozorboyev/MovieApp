@@ -11,19 +11,22 @@ import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import ubr.persanal.movieapp.BuildConfig
 import ubr.persanal.movieapp.R
-import ubr.persanal.movieapp.common.BaseInterface
 import ubr.persanal.movieapp.data.model.ActorDetailResponse
 import ubr.persanal.movieapp.databinding.FragmentActorsBinding
+import ubr.persanal.movieapp.domain.model.ActorDetailDto
+import ubr.persanal.movieapp.domain.model.MovieByActorItemDto
 import ubr.persanal.movieapp.ui.adapter.MovieByActorAdapter
 import ubr.persanal.movieapp.util.ResourceUI
 import ubr.persanal.movieapp.util.getDateFrom
 import ubr.persanal.movieapp.util.showSnack
 
 @AndroidEntryPoint
-class ActorsFragment : Fragment(), BaseInterface {
+class ActorsFragment : Fragment(), MovieByActorAdapter.CallBack {
 
     private lateinit var binding: FragmentActorsBinding
+
     private val viewModel by viewModels<ActorsViewModel>()
+
     private val adapter = MovieByActorAdapter(this)
 
     override fun onCreateView(
@@ -51,14 +54,14 @@ class ActorsFragment : Fragment(), BaseInterface {
 
     private fun stateObserve() {
 
-        viewModel.dataList.observe(viewLifecycleOwner) {
+        viewModel.movieList.observe(viewLifecycleOwner) {
             when (it) {
                 is ResourceUI.Loading -> {}
+
                 is ResourceUI.Resource -> {
 
-                    it.data?.cast?.let {
-                        adapter.setData(it)
-                    }
+                    adapter.submitList(it.data?.cast)
+
                 }
                 is ResourceUI.Error -> {
                     it.error?.showSnack(binding.root)
@@ -66,7 +69,7 @@ class ActorsFragment : Fragment(), BaseInterface {
             }
         }
 
-        viewModel.detailPerson.observe(viewLifecycleOwner) {
+        viewModel.detailActor.observe(viewLifecycleOwner) {
             when (it) {
                 is ResourceUI.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
@@ -84,7 +87,7 @@ class ActorsFragment : Fragment(), BaseInterface {
 
     }
 
-    private fun updateDetail(data: ActorDetailResponse) {
+    private fun updateDetail(data: ActorDetailDto) {
 
         binding.toolBar.title = data.name
         binding.actorBiography.text = data.biography
@@ -99,9 +102,13 @@ class ActorsFragment : Fragment(), BaseInterface {
 
     }
 
-    override fun movieItemClick(movieId: Int) {
+
+    override fun selectMovieItem(itemDto: MovieByActorItemDto) {
+
         val bundle = Bundle()
-        bundle.putInt("MOVIE_ID", movieId)
+
+        itemDto.id?.let { bundle.putInt("MOVIE_ID", it) }
+
         findNavController().navigate(R.id.action_actorsFragment_to_aboutMovieFragment, bundle)
     }
 

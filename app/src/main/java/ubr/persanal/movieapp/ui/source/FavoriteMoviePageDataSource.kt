@@ -2,15 +2,16 @@ package ubr.persanal.movieapp.ui.source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import ubr.persanal.movieapp.common.Common
+import ubr.persanal.movieapp.common.Common.START_PAGE
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.domain.model.MoviePagingDto
+import ubr.persanal.movieapp.domain.usecase.GetMoviesFavoriteUseCase
 import ubr.persanal.movieapp.domain.usecase.GetUpComingFilmsUseCase
 import ubr.persanal.movieapp.util.ResourceUI
 import java.lang.NullPointerException
 
-class UpComingMoviePageDataSource constructor(
-    private val useCase: GetUpComingFilmsUseCase
+class FavoriteMoviePageDataSource constructor(
+    private val useCase: GetMoviesFavoriteUseCase
 ) : PagingSource<Int, MoviePageItemDto>() {
 
 
@@ -23,7 +24,7 @@ class UpComingMoviePageDataSource constructor(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MoviePageItemDto> {
 
-        val currentPageKey = params.key ?: Common.START_PAGE
+        val currentPageKey = params.key ?: START_PAGE
 
         val prevKey = if (currentPageKey == 0) null else currentPageKey - 1
 

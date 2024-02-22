@@ -9,17 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import androidx.paging.LoadStateAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ubr.persanal.movieapp.R
-import ubr.persanal.movieapp.common.BaseInterface
 import ubr.persanal.movieapp.databinding.FragmentPopularBinding
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
-import ubr.persanal.movieapp.util.ResourceUI
-import ubr.persanal.movieapp.util.toast
 
 
 @AndroidEntryPoint
@@ -29,6 +25,7 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
     private val viewModel by viewModels<PopularViewModel>()
 
     private val adapter = MoviesPagingAdapter(this)
+
     private  val TAG = "PopularFragment"
 
 
@@ -75,10 +72,6 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
     }
 
 
-
-
-
-
     override fun selectMovieItem(dto: MoviePageItemDto) {
         val bundle = Bundle()
         dto.id?.let { bundle.putInt("MOVIE_ID", it) }
@@ -88,6 +81,10 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
         navController.navigate(R.id.aboutMovieFragment, bundle)
     }
 
+    override fun saveToFavorite(dto: MoviePageItemDto) {
+        Log.d("SAVE_FAVORITE", dto.toString())
+
+    }
 
 
     override fun onDestroyView() {

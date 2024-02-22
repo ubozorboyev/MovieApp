@@ -22,7 +22,7 @@ class MovieDataSourceImpl @Inject constructor(
 
         try {
 
-            val response = moviesApiService.getUpComing(BuildConfig.API_KEY)
+            val response = moviesApiService.getUpComing(BuildConfig.API_KEY, page)
 
             if (response.isSuccessful)
                 emit(ResourceUI.Resource(response.body()?.toDto()))
@@ -41,7 +41,7 @@ class MovieDataSourceImpl @Inject constructor(
 
         try {
 
-            val response = moviesApiService.getTopRated(BuildConfig.API_KEY)
+            val response = moviesApiService.getTopRated(BuildConfig.API_KEY,page)
 
             if (response.isSuccessful)
                 emit(ResourceUI.Resource(response.body()?.toDto()))
@@ -56,13 +56,32 @@ class MovieDataSourceImpl @Inject constructor(
 
     }
 
+    override suspend fun getFavoriteFilms(page: Int): Flow<ResourceUI<MoviePagingDto>>  = flow{
+
+        emit(ResourceUI.Loading)
+
+        try {
+
+            val response = moviesApiService.getFavoriteMovies(BuildConfig.ACCOUNT_ID.toInt(),BuildConfig.API_KEY,BuildConfig.SESSION_ID,page)
+
+            if (response.isSuccessful)
+                emit(ResourceUI.Resource(response.body()?.toDto()))
+            else
+                emit(ResourceUI.Error(response.message()))
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+        }
+    }
+
     override suspend fun getPoplarFilms(page: Int): Flow<ResourceUI<MoviePagingDto>>  = flow{
 
         emit(ResourceUI.Loading)
 
         try {
 
-            val response = moviesApiService.getPopular(BuildConfig.API_KEY,1)
+            val response = moviesApiService.getPopular(BuildConfig.API_KEY,page)
 
             if (response.isSuccessful)
                 emit(ResourceUI.Resource(response.body()?.toDto()))

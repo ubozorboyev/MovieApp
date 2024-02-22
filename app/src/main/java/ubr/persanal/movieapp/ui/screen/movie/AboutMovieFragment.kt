@@ -2,9 +2,11 @@ package ubr.persanal.movieapp.ui.screen.movie
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -12,19 +14,20 @@ import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import ubr.persanal.movieapp.BuildConfig
 import ubr.persanal.movieapp.R
-import ubr.persanal.movieapp.common.BaseInterface
-import ubr.persanal.movieapp.data.model.MovieDetailsResponse
 import ubr.persanal.movieapp.databinding.AboutMovieFragmentBinding
+import ubr.persanal.movieapp.domain.model.ActorItemDto
+import ubr.persanal.movieapp.domain.model.MovieDetailsDto
 import ubr.persanal.movieapp.ui.adapter.ActorsAdapter
 import ubr.persanal.movieapp.util.ResourceUI
 import ubr.persanal.movieapp.util.showSnack
 import java.lang.Exception
 
 @AndroidEntryPoint
-class AboutMovieFragment : Fragment(), BaseInterface {
+class AboutMovieFragment : Fragment(), ActorsAdapter.CallBack {
 
 
     private lateinit var binding: AboutMovieFragmentBinding
+
     private val viewModel by viewModels<AboutMovieViewModel>()
 
     private val adapter = ActorsAdapter(this)
@@ -47,6 +50,8 @@ class AboutMovieFragment : Fragment(), BaseInterface {
     private fun initViews() {
 
         binding.recyclerViewCasts.adapter = adapter
+
+
         binding.toolBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
@@ -70,12 +75,13 @@ class AboutMovieFragment : Fragment(), BaseInterface {
         viewModel.movieActors.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ResourceUI.Loading -> {
-
+                  //  binding.progressBar.visibility
                 }
                 is ResourceUI.Resource -> {
-                    state.data?.cast?.let {
-                        adapter.setData(it)
-                    }
+
+                    Log.d("ACTORACTOR","${state.data}")
+                    adapter.submitList(state.data?.cast)
+
                 }
                 is ResourceUI.Error -> {
                     state.error?.showSnack(binding.root)
@@ -84,29 +90,41 @@ class AboutMovieFragment : Fragment(), BaseInterface {
         }
     }
 
-    private fun setDetail(data: MovieDetailsResponse) {
+    private fun setDetail(data: MovieDetailsDto) {
         try {
+
             binding.movieVote.text = data.vote_count.toString()
-            binding.progressRating.setProgress(data.vote_average!! * 10, 100.0)
-            if (data.vote_average.toInt() * 10 >= 70) {
-                binding.progressRating.dotColor = Color.parseColor("#09A193")
-                binding.progressRating.progressColor = Color.parseColor("#09A193")
-                binding.progressRating.progressBackgroundColor = Color.parseColor("#8009A193")
-            }
+
             binding.toolBar.title = data.title
+
             binding.movieOverview.text = data.overview
+
+            binding.progressRating.setProgress((data.vote_average?:0.0) * 10, 100.0)
+
+            if ((data.vote_average?.toInt()?:0) * 10 >= 70) {
+
+                binding.progressRating.dotColor = ContextCompat.getColor(requireContext(),R.color.progress_green)
+                binding.progressRating.progressColor = ContextCompat.getColor(requireContext(),R.color.progress_green)
+                binding.progressRating.progressBackgroundColor = ContextCompat.getColor(requireContext(),R.color.progress_bg_green)
+            }
+
+
 
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
         Glide.with(requireContext()).load(BuildConfig.IMAGE_URL + data.backdrop_path)
             .into(binding.movieImage)
 
     }
 
-    override fun actorItemClick(actorId: Int) {
+    override fun actorItemClick(itemDto: ActorItemDto) {
+
         val bundle = Bundle()
-        bundle.putInt("PERSON_ID", actorId)
+
+        itemDto.id?.let { bundle.putInt("PERSON_ID", it) }
+
         findNavController().navigate(R.id.actorsFragment, bundle)
     }
 

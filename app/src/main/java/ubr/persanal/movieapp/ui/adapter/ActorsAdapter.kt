@@ -2,35 +2,36 @@ package ubr.persanal.movieapp.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ubr.persanal.movieapp.BuildConfig
 import ubr.persanal.movieapp.R
-import ubr.persanal.movieapp.common.BaseInterface
-import ubr.persanal.movieapp.data.model.ActorItem
 import ubr.persanal.movieapp.databinding.ItemActorBinding
+import ubr.persanal.movieapp.domain.model.ActorItemDto
 
-class ActorsAdapter(private val baseInterface: BaseInterface) :
-    RecyclerView.Adapter<ActorsAdapter.ViewHolderActor>() {
+class ActorsAdapter(private val listener: CallBack) :
+    ListAdapter<ActorItemDto,ActorsAdapter.ViewHolderActor>(diffUtil) {
 
-    private val dataList = arrayListOf<ActorItem>()
 
     inner class ViewHolderActor(private val itemBinding: ItemActorBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {
 
-        fun bind(data: ActorItem) {
+        fun bind(itemDto: ActorItemDto) {
             itemBinding.apply {
-                actorName.text = data.name
-                actorCharacter.text = data.character?.replace("/", "\n")
+                actorName.text = itemDto.name
+                actorCharacter.text = itemDto.character?.replace("/", "\n")
 
                 Glide.with(this.root)
-                    .load(BuildConfig.IMAGE_URL + data.profile_path)
+                    .load(BuildConfig.IMAGE_URL + itemDto.profile_path)
                     .error(R.drawable.avatar)
                     .placeholder(R.drawable.avatar)
                     .into(actorImage)
 
                 itemBinding.root.setOnClickListener {
-                   // baseInterface.actorItemClick(data.id)
+
+                    listener.actorItemClick(itemDto)
                 }
             }
         }
@@ -47,17 +48,31 @@ class ActorsAdapter(private val baseInterface: BaseInterface) :
     }
 
     override fun onBindViewHolder(holder: ViewHolderActor, position: Int) {
-        holder.bind(dataList[position])
+        holder.bind(getItem(position))
+
     }
 
-    override fun getItemCount(): Int {
-        return dataList.size
+
+    object diffUtil : DiffUtil.ItemCallback<ActorItemDto>() {
+
+        override fun areItemsTheSame(
+            oldItem: ActorItemDto,
+            newItem: ActorItemDto
+        ): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(
+            oldItem: ActorItemDto,
+            newItem: ActorItemDto
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
     }
 
-    fun setData(ls: List<ActorItem>) {
-        dataList.clear()
-        dataList.addAll(ls)
-        notifyDataSetChanged()
+
+    interface CallBack{
+        fun actorItemClick(itemDto: ActorItemDto)
     }
 
 

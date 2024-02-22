@@ -2,6 +2,7 @@ package ubr.persanal.movieapp.ui.source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import ubr.persanal.movieapp.common.Common
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.domain.model.MoviePagingDto
 import ubr.persanal.movieapp.domain.usecase.GetTopRatedFilmsUseCase
@@ -23,7 +24,7 @@ class TopRatedMoviePageDataSource constructor(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MoviePageItemDto> {
 
-        val currentPageKey = params.key ?: 0
+        val currentPageKey = params.key ?: Common.START_PAGE
 
         val prevKey = if (currentPageKey == 0) null else currentPageKey - 1
 

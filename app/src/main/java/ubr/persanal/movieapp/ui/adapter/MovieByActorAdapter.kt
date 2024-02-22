@@ -2,29 +2,32 @@ package ubr.persanal.movieapp.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ubr.persanal.movieapp.BuildConfig
 import ubr.persanal.movieapp.R
-import ubr.persanal.movieapp.common.BaseInterface
-import ubr.persanal.movieapp.data.model.MovieByActorItem
 import ubr.persanal.movieapp.databinding.ItemMovieActorBinding
+import ubr.persanal.movieapp.domain.model.MovieByActorItemDto
 
-class MovieByActorAdapter(private val baseInterface: BaseInterface) :
-    RecyclerView.Adapter<MovieByActorAdapter.ViewHolderMovieActor>() {
+class MovieByActorAdapter(private val listener: CallBack) :
+    ListAdapter<MovieByActorItemDto,MovieByActorAdapter.ViewHolderMovieActor>(diffUtill) {
 
-    private val dataList = arrayListOf<MovieByActorItem>()
 
     inner class ViewHolderMovieActor(private val itemBinding: ItemMovieActorBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {
 
-        fun bind(data: MovieByActorItem) {
-            itemBinding.movieName.text = data.title
-            Glide.with(itemView).load(BuildConfig.IMAGE_URL + data.poster_path)
+        fun bind(itemDto: MovieByActorItemDto) {
+
+            itemBinding.movieName.text = itemDto.title
+
+            Glide.with(itemView).load(BuildConfig.IMAGE_URL + itemDto.poster_path)
                 .placeholder(R.drawable.please_holder)
                 .into(itemBinding.movieImage)
+
             itemBinding.root.setOnClickListener {
-                //baseInterface.movieItemClick(data.id)
+                listener.selectMovieItem(itemDto)
             }
             itemBinding.cardView.setBackgroundResource(R.drawable.item_movie_card_bg)
         }
@@ -38,17 +41,25 @@ class MovieByActorAdapter(private val baseInterface: BaseInterface) :
     }
 
     override fun onBindViewHolder(holder: ViewHolderMovieActor, position: Int) {
-        holder.bind(dataList[position])
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int {
-        return dataList.size
+
+    object diffUtill: DiffUtil.ItemCallback<MovieByActorItemDto>(){
+        override fun areItemsTheSame(oldItem: MovieByActorItemDto, newItem: MovieByActorItemDto): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: MovieByActorItemDto, newItem: MovieByActorItemDto): Boolean {
+            return oldItem.id == newItem.id
+        }
+
     }
 
-    fun setData(ls: List<MovieByActorItem>) {
-        dataList.clear()
-        dataList.addAll(ls)
-        notifyDataSetChanged()
+    interface CallBack{
+
+        fun selectMovieItem(itemDto: MovieByActorItemDto)
     }
+
 
 }

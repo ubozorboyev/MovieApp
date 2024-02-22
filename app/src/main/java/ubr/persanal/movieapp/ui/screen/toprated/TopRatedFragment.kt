@@ -101,4 +101,8 @@ class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
         navController.navigate(R.id.aboutMovieFragment, bundle)
     }
 
+    override fun saveToFavorite(dto: MoviePageItemDto) {
+
+    }
+
 }

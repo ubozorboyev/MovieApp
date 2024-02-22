@@ -12,6 +12,8 @@ interface MovieDataSource {
 
     suspend fun getTopRatedFilms(page:Int):Flow<ResourceUI<MoviePagingDto>>
 
+    suspend fun getFavoriteFilms(page:Int):Flow<ResourceUI<MoviePagingDto>>
+
     suspend fun getPoplarFilms(page:Int):Flow<ResourceUI<MoviePagingDto>>
 
     suspend fun getMovieDetails(movieId: Int):Flow<ResourceUI<MovieDetailsDto>>

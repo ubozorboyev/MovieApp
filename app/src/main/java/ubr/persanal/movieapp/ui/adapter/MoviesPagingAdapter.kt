@@ -3,12 +3,15 @@ package ubr.persanal.movieapp.ui.adapter
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
 import com.bumptech.glide.Glide
 import ubr.persanal.movieapp.BuildConfig
+import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.ItemMovieBinding
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.util.getDateFrom
@@ -51,23 +54,33 @@ class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<Mov
                 })
             }
 
+            val context = itemBinding.root.context
+
             if ((itemDto.vote_average?.toInt()?: 0) * 10 >= 70) {
-                itemBinding.progressRating.dotColor = Color.parseColor("#09A193")
-                itemBinding.progressRating.progressColor = Color.parseColor("#09A193")
-                itemBinding.progressRating.progressBackgroundColor = Color.parseColor("#8009A193")
+
+                itemBinding.progressRating.dotColor = ContextCompat.getColor(context,R.color.progress_green)
+
+                itemBinding.progressRating.progressColor = ContextCompat.getColor(context,R.color.progress_green)
+                itemBinding.progressRating.progressBackgroundColor = ContextCompat.getColor(context,R.color.progress_bg_green)
             } else {
-                itemBinding.progressRating.dotColor = Color.parseColor("#FFC001")
-                itemBinding.progressRating.progressColor = Color.parseColor("#FFC001")
-                itemBinding.progressRating.progressBackgroundColor = Color.parseColor("#80FFC001")
+                itemBinding.progressRating.dotColor = ContextCompat.getColor(context,R.color.progress_yellow)
+                itemBinding.progressRating.progressColor = ContextCompat.getColor(context,R.color.progress_yellow)
+                itemBinding.progressRating.progressBackgroundColor = ContextCompat.getColor(context,R.color.progress_bg_yellow)
             }
 
             Glide.with(itemBinding.root).load(BuildConfig.IMAGE_URL + itemDto.poster_path)
                 .into(itemBinding.itemImage)
 
-            itemBinding.root.setOnClickListener {
+            itemBinding.movieItem.setOnClickListener {
                 listener.selectMovieItem(itemDto)
-                //baseInterface.movieItemClick(data.id)
             }
+
+            itemBinding.favoriteButton.setOnClickListener {
+
+                listener.saveToFavorite(itemDto)
+            }
+
+
         }
     }
 
@@ -94,6 +107,8 @@ class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<Mov
 
     interface Callback {
         fun selectMovieItem(dto: MoviePageItemDto)
+
+        fun saveToFavorite(dto: MoviePageItemDto)
     }
 
 

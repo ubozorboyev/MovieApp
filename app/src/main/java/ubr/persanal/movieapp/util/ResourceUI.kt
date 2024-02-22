@@ -1,5 +1,6 @@
 package ubr.persanal.movieapp.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.Toast
@@ -25,13 +26,15 @@ fun String.showSnack(view: View) {
 }
 
 
+@SuppressLint("SimpleDateFormat")
 fun String.getDateFrom(): String {
 
-    try {
+    return try {
         val dateInput = SimpleDateFormat("yyyy-MM-dd")
         val dateOutput = SimpleDateFormat("MMM dd, yyyy")
-        return dateOutput.format(dateInput.parse(this))
+        dateOutput.format(dateInput.parse(this)!!)
+
     } catch (e: Exception) {
-        return this
+        e.message.toString()
     }
 }

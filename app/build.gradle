@@ -23,12 +23,13 @@ android {
 
         buildConfigField("String", "ACCOUNT_ID", "\"12063851\"")
 
-        buildConfigField("String", "SESSION_ID", "\"892fee6fd1d552efcba97c573d9e871acb0957bf\"")
+        buildConfigField("String", "SESSION_ID", "\"34cdda6a4d88f14e0f9d9e67454d3b428154b066\"")
 
+        buildConfigField("String", "API_KEY", "\"5a2204ca113da2f3e0a3e78eda29f775\"")
 
-        buildConfigField("String", "API_KEY", "\"db5091c6d9f25f2d38ff39a0ebd24e7c\"")
+        buildConfigField("String", "REQUEST_TOKEN", "\"4ff49d7ea20a473fc2792bee727010261a306d19\"")
 
-        buildConfigField("String", "REQUEST_TOKEN", "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYjUwOTFjNmQ5ZjI1ZjJkMzhmZjM5YTBlYmQyNGU3YyIsInN1YiI6IjYyMmFlNzBkNzI2ZmIxMDA2ZjlkMjZlOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.HLmaPvOQjksfflRbxzHcgjutmGnAMsiMVlsy568LOrc\"")
+        buildConfigField("String", "BASIC_AUTH_TOKEN", "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1YTIyMDRjYTExM2RhMmYzZTBhM2U3OGVkYTI5Zjc3NSIsInN1YiI6IjYyMmFlNzBkNzI2ZmIxMDA2ZjlkMjZlOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.yL0NBy0XVfQf237pKtaKeMZpm4Yxu14AT7y4WzO9nFk\"")
 
 
     }
@@ -82,7 +83,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.3"
 
     // Glide
-    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     implementation 'com.github.antonKozyriatskyi:CircularProgressIndicator:1.3.0'

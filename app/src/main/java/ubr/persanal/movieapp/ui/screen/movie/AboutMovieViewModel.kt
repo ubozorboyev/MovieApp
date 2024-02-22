@@ -3,46 +3,66 @@ package ubr.persanal.movieapp.ui.screen.movie
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ubr.persanal.movieapp.data.model.MovieActorsResponse
 import ubr.persanal.movieapp.data.model.MovieDetailsResponse
 import ubr.persanal.movieapp.data.repo.MovieRepositoryImpl
+import ubr.persanal.movieapp.domain.model.MovieActorsDto
+import ubr.persanal.movieapp.domain.model.MovieDetailsDto
+import ubr.persanal.movieapp.domain.usecase.GetActorsUseCase
+import ubr.persanal.movieapp.domain.usecase.GetMovieDetailsUseCase
 import ubr.persanal.movieapp.util.ResourceUI
 import javax.inject.Inject
 
 @HiltViewModel
 class AboutMovieViewModel @Inject constructor(
-    private val repository: MovieRepositoryImpl,
+    private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
+    private val getActorsUseCase: GetActorsUseCase,
     private val savedState: SavedStateHandle
 ) : ViewModel() {
 
 
-    private val _movieDetail: MutableLiveData<ResourceUI<MovieDetailsResponse>> =
+    private val _movieDetail: MutableLiveData<ResourceUI<MovieDetailsDto>> =
         MutableLiveData()
-    val movieDetail: LiveData<ResourceUI<MovieDetailsResponse>> = _movieDetail
+    val movieDetail: LiveData<ResourceUI<MovieDetailsDto>> = _movieDetail
 
-    private val _movieActors: MutableLiveData<ResourceUI<MovieActorsResponse>> =
+    private val _movieActors: MutableLiveData<ResourceUI<MovieActorsDto>> =
         MutableLiveData()
-    val movieActors: LiveData<ResourceUI<MovieActorsResponse>> = _movieActors
+    val movieActors: LiveData<ResourceUI<MovieActorsDto>> = _movieActors
 
 
     init {
-        fetchMovieDetails()
-    }
-
-    private fun fetchMovieDetails() {
 
         val movieId = savedState.get<Int>("MOVIE_ID") ?: -1
 
+        fetchMovieDetails(movieId)
+
+        getActorsByMovie(movieId)
+    }
+
+    private fun fetchMovieDetails(movieId: Int) {
+
+
         viewModelScope.launch {
 
-            repository.getMovieDetails(movieId).collect {
-                //_movieDetail.postValue(it)
+            getMovieDetailsUseCase.invoke(movieId).collectLatest {
+                _movieDetail.postValue(it)
             }
 
-//            repository.getActors(movieId).collect {
-//                _movieActors.postValue(it)
-//            }
+        }
+
+    }
+
+
+    private fun getActorsByMovie(movieId:Int){
+
+        viewModelScope.launch {
+
+            getActorsUseCase.invoke(movieId).collectLatest {
+                _movieActors.postValue(it)
+
+            }
         }
 
     }
