@@ -1,0 +1,11 @@
+package ubr.persanal.movieapp.domain.usecase
+
+import kotlinx.coroutines.flow.Flow
+import ubr.persanal.movieapp.domain.model.MoviePagingDto
+import ubr.persanal.movieapp.util.ResourceUI
+
+interface GetTopRatedFilmsUseCase {
+
+    suspend fun invoke(page:Int): Flow<ResourceUI<MoviePagingDto>>
+
+}
