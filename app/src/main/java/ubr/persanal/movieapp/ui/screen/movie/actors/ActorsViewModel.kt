@@ -35,18 +35,15 @@ class ActorsViewModel @Inject constructor(
 
         getDetailActor(personId)
 
-
     }
 
     private fun getMoviesByActor(personId:Int) {
-
 
         viewModelScope.launch {
 
             getMoviesByActorUseCase.invoke(personId).collect {
                 _movieList.postValue(it)
             }
-
 
         }
     }

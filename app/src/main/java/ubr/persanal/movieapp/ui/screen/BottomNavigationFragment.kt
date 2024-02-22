@@ -54,11 +54,6 @@ class BottomNavigationFragment : Fragment() {
         }
 
 
-
-
-
-//        binding.bottomNavigationView.setOnItemReselectedListener { }
-
     }
 
 }

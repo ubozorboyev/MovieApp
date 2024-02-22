@@ -2,12 +2,8 @@ package ubr.persanal.movieapp.ui.screen.movie
 
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import ubr.persanal.movieapp.data.model.MovieActorsResponse
-import ubr.persanal.movieapp.data.model.MovieDetailsResponse
-import ubr.persanal.movieapp.data.repo.MovieRepositoryImpl
 import ubr.persanal.movieapp.domain.model.MovieActorsDto
 import ubr.persanal.movieapp.domain.model.MovieDetailsDto
 import ubr.persanal.movieapp.domain.usecase.GetActorsUseCase

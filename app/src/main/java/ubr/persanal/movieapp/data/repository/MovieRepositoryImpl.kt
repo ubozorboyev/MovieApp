@@ -1,4 +1,4 @@
-package ubr.persanal.movieapp.data.repo
+package ubr.persanal.movieapp.data.repository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

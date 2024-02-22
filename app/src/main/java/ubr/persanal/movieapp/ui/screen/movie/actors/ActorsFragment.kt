@@ -66,6 +66,10 @@ class ActorsFragment : Fragment(), MovieByActorAdapter.CallBack {
                 is ResourceUI.Error -> {
                     it.error?.showSnack(binding.root)
                 }
+
+                else -> {
+
+                }
             }
         }
 
@@ -82,6 +86,8 @@ class ActorsFragment : Fragment(), MovieByActorAdapter.CallBack {
                     binding.progressBar.visibility = View.INVISIBLE
                     it.error?.showSnack(binding.root)
                 }
+
+                else -> {}
             }
         }
 
