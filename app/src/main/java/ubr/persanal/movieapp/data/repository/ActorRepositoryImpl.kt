@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class ActorRepositoryImpl @Inject constructor(private val actorDataSource: ActorDataSource):ActorRepository {
 
-    override suspend fun getActors(movieId: Int): Flow<ResourceUI<MovieActorsDto>>  = withContext(Dispatchers.IO){
+    override suspend fun getActors(movieId: Long): Flow<ResourceUI<MovieActorsDto>>  = withContext(Dispatchers.IO){
 
         actorDataSource.getActors(movieId)
 

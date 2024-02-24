@@ -30,14 +30,14 @@ class AboutMovieViewModel @Inject constructor(
 
     init {
 
-        val movieId = savedState.get<Int>("MOVIE_ID") ?: -1
+        val movieId = savedState.get<Long>("MOVIE_ID") ?: -1
 
         fetchMovieDetails(movieId)
 
         getActorsByMovie(movieId)
     }
 
-    private fun fetchMovieDetails(movieId: Int) {
+    private fun fetchMovieDetails(movieId: Long) {
 
 
         viewModelScope.launch {
@@ -51,7 +51,7 @@ class AboutMovieViewModel @Inject constructor(
     }
 
 
-    private fun getActorsByMovie(movieId:Int){
+    private fun getActorsByMovie(movieId:Long){
 
         viewModelScope.launch {
 

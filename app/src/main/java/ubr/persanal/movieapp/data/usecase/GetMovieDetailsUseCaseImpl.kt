@@ -10,7 +10,7 @@ import javax.inject.Inject
 class GetMovieDetailsUseCaseImpl @Inject constructor( private val repository: MovieRepository):
     GetMovieDetailsUseCase {
 
-    override suspend fun invoke(movieId:Int): Flow<ResourceUI<MovieDetailsDto>> {
+    override suspend fun invoke(movieId:Long): Flow<ResourceUI<MovieDetailsDto>> {
         return repository.getMovieDetails(movieId)
     }
 }

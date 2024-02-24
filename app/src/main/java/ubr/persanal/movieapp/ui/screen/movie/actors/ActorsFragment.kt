@@ -113,7 +113,7 @@ class ActorsFragment : Fragment(), MovieByActorAdapter.CallBack {
 
         val bundle = Bundle()
 
-        itemDto.id?.let { bundle.putInt("MOVIE_ID", it) }
+        itemDto.id?.let { bundle.putLong("MOVIE_ID", it.toLong()) }
 
         findNavController().navigate(R.id.action_actorsFragment_to_aboutMovieFragment, bundle)
     }

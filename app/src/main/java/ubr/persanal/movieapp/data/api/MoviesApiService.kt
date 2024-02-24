@@ -35,6 +35,14 @@ interface MoviesApiService {
         @Query("page") page: Int,
         ): Response<MoviePagingResponse>
 
+    @POST("3/account/{account_id}/favorite")
+    suspend fun addFavoriteMovies(
+        @Path("account_id") accountId:Int,
+        @Query("api_key") apiKey: String,
+        @Query("session_id") sessionId:String,
+        @Body request: FavoriteRequest,
+    ): Response<SuccessResponse>
+
     @GET("3/movie/upcoming")
     suspend fun getUpComing(
         @Query("api_key") apiKey: String,
@@ -44,7 +52,7 @@ interface MoviesApiService {
 
     @GET("3/movie/{id}")
     suspend fun getMovieDetails(
-        @Path("id") movieId: Int,
+        @Path("id") movieId: Long,
         @Query("api_key") apiKey: String
     ): Response<MovieDetailsResponse>
 

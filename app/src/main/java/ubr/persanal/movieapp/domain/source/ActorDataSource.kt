@@ -10,7 +10,7 @@ interface ActorDataSource {
 
     suspend fun getDetailActor(personId: Int): Flow<ResourceUI<ActorDetailDto>>
 
-    suspend fun getActors(movieId: Int) : Flow<ResourceUI<MovieActorsDto>>
+    suspend fun getActors(movieId: Long) : Flow<ResourceUI<MovieActorsDto>>
 
 
 }

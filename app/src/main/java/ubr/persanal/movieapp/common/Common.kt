@@ -3,7 +3,7 @@ package ubr.persanal.movieapp.common
 object Common {
 
     //http://dev.travisbell.com/play/v3_auth.html create tokens and session ids
-
+   // https://developer.themoviedb.org/reference/account-get-favorites
 
     const val START_PAGE = 1
 

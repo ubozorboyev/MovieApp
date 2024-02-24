@@ -34,7 +34,7 @@ class ActorDataSourceImpl @Inject constructor(
 
     }
 
-    override suspend fun getActors(movieId: Int): Flow<ResourceUI<MovieActorsDto>>  = flow {
+    override suspend fun getActors(movieId: Long): Flow<ResourceUI<MovieActorsDto>>  = flow {
 
         emit(ResourceUI.Loading)
 

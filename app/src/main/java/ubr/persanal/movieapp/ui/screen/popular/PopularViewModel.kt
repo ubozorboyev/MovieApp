@@ -12,9 +12,13 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
+import ubr.persanal.movieapp.domain.model.SuccessDto
 import ubr.persanal.movieapp.domain.usecase.GetPoplarFilmsUseCase
+import ubr.persanal.movieapp.domain.usecase.SetMovieFavoriteUseCase
 import ubr.persanal.movieapp.ui.source.PopularMoviePageDataSource
 import ubr.persanal.movieapp.ui.source.TopRatedMoviePageDataSource
 import ubr.persanal.movieapp.util.ResourceUI
@@ -22,10 +26,14 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class PopularViewModel @Inject constructor(private val useCase: GetPoplarFilmsUseCase) :
-    ViewModel() {
+class PopularViewModel @Inject constructor(
+    private val useCase: GetPoplarFilmsUseCase,
+    private val setMovieFavoriteUseCase: SetMovieFavoriteUseCase,
+    ) : ViewModel() {
 
 
+    private val _successFavorite = MutableLiveData<ResourceUI<SuccessDto>>()
+    val successFavorite: LiveData<ResourceUI<SuccessDto>> = _successFavorite
 
 
     val popularListPager: Flow<PagingData<MoviePageItemDto>> =
@@ -35,11 +43,18 @@ class PopularViewModel @Inject constructor(private val useCase: GetPoplarFilmsUs
 
         }.flow.cachedIn(viewModelScope)
     init {
-        fetchData()
         Log.d("ViewModel", "PopularViewModel: ")
     }
 
-     fun fetchData() {
+    fun setFavoriteMovie(requestDto: FavoriteRequestDto, itemDto: MoviePageItemDto){
+
+        viewModelScope.launch {
+
+            setMovieFavoriteUseCase.invoke(requestDto, itemDto).collectLatest {
+
+                _successFavorite.value = it
+            }
+        }
 
     }
 

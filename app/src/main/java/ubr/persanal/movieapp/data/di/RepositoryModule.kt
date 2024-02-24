@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import ubr.persanal.movieapp.data.local.FavoriteDao
 import ubr.persanal.movieapp.data.repository.ActorRepositoryImpl
 import ubr.persanal.movieapp.data.repository.MovieRepositoryImpl
 import ubr.persanal.movieapp.domain.reposotory.ActorRepository
@@ -22,5 +23,6 @@ interface RepositoryModule {
     fun provideActorRepository(actorRepository: ActorRepositoryImpl): ActorRepository
 
 
-    
+
+
 }

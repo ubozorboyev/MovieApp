@@ -6,7 +6,7 @@ import ubr.persanal.movieapp.util.ResourceUI
 
 interface GetMovieDetailsUseCase {
 
-    suspend fun invoke(movieId: Int):Flow<ResourceUI<MovieDetailsDto>>
+    suspend fun invoke(movieId: Long):Flow<ResourceUI<MovieDetailsDto>>
 
 
 }

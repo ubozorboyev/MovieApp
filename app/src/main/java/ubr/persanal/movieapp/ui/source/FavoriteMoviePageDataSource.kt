@@ -1,7 +1,9 @@
 package ubr.persanal.movieapp.ui.source
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import ubr.persanal.movieapp.common.Common
 import ubr.persanal.movieapp.common.Common.START_PAGE
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.domain.model.MoviePagingDto
@@ -26,14 +28,17 @@ class FavoriteMoviePageDataSource constructor(
 
         val currentPageKey = params.key ?: START_PAGE
 
-        val prevKey = if (currentPageKey == 0) null else currentPageKey - 1
+        val prevKey = if (currentPageKey == Common.START_PAGE) null else currentPageKey - 1
 
         var result: ResourceUI<MoviePagingDto>? = null
 
+        Log.d("PageDataSource","currentPageKey  =  $currentPageKey")
+
         useCase.invoke(currentPageKey).collect {
 
-            result = it
+            Log.d("PageDataSource","result  =  ${it}")
 
+            result = it
 
         }
 

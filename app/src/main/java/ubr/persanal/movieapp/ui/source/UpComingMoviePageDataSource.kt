@@ -25,7 +25,7 @@ class UpComingMoviePageDataSource constructor(
 
         val currentPageKey = params.key ?: Common.START_PAGE
 
-        val prevKey = if (currentPageKey == 0) null else currentPageKey - 1
+        val prevKey = if (currentPageKey == Common.START_PAGE) null else currentPageKey - 1
 
         var result: ResourceUI<MoviePagingDto>? = null
 

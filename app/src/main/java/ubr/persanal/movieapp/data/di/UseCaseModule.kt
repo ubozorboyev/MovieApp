@@ -11,8 +11,8 @@ import ubr.persanal.movieapp.data.usecase.GetMoviesByActorUseCaseImpl
 import ubr.persanal.movieapp.data.usecase.GetMoviesFavoriteUseCaseImpl
 import ubr.persanal.movieapp.data.usecase.GetPoplarFilmsUseCaseImpl
 import ubr.persanal.movieapp.data.usecase.GetTopRatedFilmsUseCaseImpl
-import ubr.persanal.movieapp.data.usecase.GetTopRatedFilmsUseCaseImpl_Factory
 import ubr.persanal.movieapp.data.usecase.GetUpComingFilmsUseCaseImpl
+import ubr.persanal.movieapp.data.usecase.SetMovieFavoriteUseCaseIml
 import ubr.persanal.movieapp.domain.usecase.GetActorsUseCase
 import ubr.persanal.movieapp.domain.usecase.GetDetailActorUseCase
 import ubr.persanal.movieapp.domain.usecase.GetMovieDetailsUseCase
@@ -21,6 +21,7 @@ import ubr.persanal.movieapp.domain.usecase.GetMoviesFavoriteUseCase
 import ubr.persanal.movieapp.domain.usecase.GetPoplarFilmsUseCase
 import ubr.persanal.movieapp.domain.usecase.GetTopRatedFilmsUseCase
 import ubr.persanal.movieapp.domain.usecase.GetUpComingFilmsUseCase
+import ubr.persanal.movieapp.domain.usecase.SetMovieFavoriteUseCase
 
 
 @Module
@@ -53,5 +54,9 @@ interface UseCaseModule {
 
     @Binds
     fun provideGetMoviesByActorUseCase(useCase: GetMoviesByActorUseCaseImpl): GetMoviesByActorUseCase
+
+
+    @Binds
+    fun provideSetMovieFavoriteUseCase(useCase: SetMovieFavoriteUseCaseIml): SetMovieFavoriteUseCase
 
 }

@@ -9,7 +9,7 @@ interface ActorsApiService {
 
     @GET("3/movie/{id}/credits")
     suspend fun getMovieActors(
-        @Path("id") movieId: Int,
+        @Path("id") movieId: Long,
         @Query("api_key") api_key: String
     ): Response<MovieActorsResponse>
 

@@ -94,7 +94,7 @@ class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
 
     override fun selectMovieItem(dto: MoviePageItemDto) {
         val bundle = Bundle()
-        dto.id?.let { bundle.putInt("MOVIE_ID", it) }
+        dto.id?.let { bundle.putLong("MOVIE_ID", it) }
 
         val navController =
             Navigation.findNavController(requireActivity(), R.id.navigation_main_host)

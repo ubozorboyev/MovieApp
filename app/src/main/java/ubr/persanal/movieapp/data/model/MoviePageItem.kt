@@ -1,8 +1,14 @@
 package ubr.persanal.movieapp.data.model
 
+import android.graphics.BitmapFactory
 import com.google.gson.annotations.SerializedName
+import ubr.persanal.movieapp.BuildConfig
+import ubr.persanal.movieapp.data.local.MoviePageItemEntity
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
+import ubr.persanal.movieapp.util.BitmapConverter
 import java.io.Serializable
+import java.net.URL
+
 
 data class MoviePageItem(
     
@@ -12,11 +18,11 @@ data class MoviePageItem(
     @SerializedName("backdrop_path")
     val backdrop_path: String? = null,
     
-    @SerializedName("genre_ids")
-    val genre_ids: List<Int>? = null,
-    
+//    @SerializedName("genre_ids")
+//    val genre_ids: List<Int>? = null,
+//
     @SerializedName("id")
-    val id: Int? = null,
+    val id: Long? = null,
     
     @SerializedName("original_language")
     val original_language: String? = null,
@@ -46,15 +52,20 @@ data class MoviePageItem(
     val vote_average: Double? = null,
     
     @SerializedName("vote_count")
-    val vote_count: Int? = null
-):Serializable{
+    val vote_count: Int? = null,
+
+    var is_favorote: Boolean? = false,
+
+    var imageString: String? = null,
+
+
+    ):Serializable{
 
     fun toDto():MoviePageItemDto{
 
         return MoviePageItemDto(
             adult,
             backdrop_path,
-            genre_ids,
             id,
             original_language,
             original_title,
@@ -65,7 +76,31 @@ data class MoviePageItem(
             title,
             video,
             vote_average,
-            vote_count
+            vote_count,
+            is_favorote,
+            imageString
+        )
+    }
+
+    fun toEntity():MoviePageItemEntity{
+
+
+        return MoviePageItemEntity(
+            adult,
+            backdrop_path,
+            id,
+            original_language,
+            original_title,
+            overview,
+            popularity,
+            poster_path,
+            release_date,
+            title,
+            video,
+            vote_average,
+            vote_count,
+            is_favorote,
+            imageString
         )
     }
 }

@@ -1,5 +1,6 @@
 package ubr.persanal.movieapp.domain.model
 
+import ubr.persanal.movieapp.data.local.MoviePageItemEntity
 import java.io.Serializable
 
 data class MoviePageItemDto(
@@ -8,9 +9,9 @@ data class MoviePageItemDto(
 
     val backdrop_path: String? = null,
 
-    val genre_ids: List<Int>? = null,
+    //val genre_ids: List<Int>? = null,
 
-    val id: Int? = null,
+    val id: Long? = null,
 
     val original_language: String? = null,
 
@@ -30,5 +31,34 @@ data class MoviePageItemDto(
 
     val vote_average: Double? = null,
 
-    val vote_count: Int? = null
-):Serializable
+    val vote_count: Int? = null,
+
+    var is_favorote: Boolean? = false,
+
+    var imageString: String? = null,
+
+
+    ):Serializable{
+
+    fun toEntity(): MoviePageItemEntity {
+
+
+        return MoviePageItemEntity(
+            adult,
+            backdrop_path,
+            id,
+            original_language,
+            original_title,
+            overview,
+            popularity,
+            poster_path,
+            release_date,
+            title,
+            video,
+            vote_average,
+            vote_count,
+            is_favorote,
+            imageString
+        )
+    }
+    }

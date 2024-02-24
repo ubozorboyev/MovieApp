@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,8 +13,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.FragmentFavoriteBinding
+import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
+import ubr.persanal.movieapp.util.MediaType
+import ubr.persanal.movieapp.util.ResourceUI
+import ubr.persanal.movieapp.util.showSnack
 
 @AndroidEntryPoint
 class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
@@ -43,15 +48,48 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
         }
 
+        observerParameters()
+
+
+
+    }
+
+    private fun observerParameters(){
 
         lifecycleScope.launch {
 
-            viewModel.upComingListPager.collect {
+            viewModel.favoriteListPager.collect {
 
                 adapter.submitData(it)
 
                 binding.swipeRefreshLayout.isRefreshing = false
 
+            }
+        }
+
+        lifecycleScope.launch {
+
+            viewModel.successFavorite.observe(viewLifecycleOwner){
+
+                when(it){
+                    is ResourceUI.Loading ->{
+                        binding.progressBar.isVisible = true
+                    }
+                    is ResourceUI.Error ->{
+                        binding.progressBar.isVisible = false
+
+                        it.error?.showSnack(binding.root)
+
+                    }
+                    is ResourceUI.Resource ->{
+
+                        adapter.refresh()
+
+                        binding.progressBar.isVisible = false
+
+                    }
+
+                }
             }
         }
 
@@ -66,7 +104,7 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
     override fun selectMovieItem(dto: MoviePageItemDto) {
         val bundle = Bundle()
 
-        dto.id?.let { bundle.putInt("MOVIE_ID", it) }
+        dto.id?.let { bundle.putLong("MOVIE_ID", it) }
 
         val navController =
             Navigation.findNavController(requireActivity(), R.id.navigation_main_host)
@@ -75,6 +113,20 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
     }
 
     override fun saveToFavorite(dto: MoviePageItemDto) {
+
+
+        dto.id?.let {
+
+            val requestDto = FavoriteRequestDto(
+                favorite = false,
+                mediaId = it.toInt(),
+                mediaType = MediaType.movie.name
+            )
+
+            viewModel.setFavoriteMovie(requestDto, dto)
+        }
+
+
 
     }
 

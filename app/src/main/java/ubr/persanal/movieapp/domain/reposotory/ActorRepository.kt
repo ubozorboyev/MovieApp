@@ -8,7 +8,7 @@ import ubr.persanal.movieapp.util.ResourceUI
 
 interface ActorRepository {
 
-    suspend fun getActors(movieId: Int) : Flow<ResourceUI<MovieActorsDto>>
+    suspend fun getActors(movieId: Long) : Flow<ResourceUI<MovieActorsDto>>
 
     suspend fun getDetailActor(personId: Int):Flow<ResourceUI<ActorDetailDto>>
 
