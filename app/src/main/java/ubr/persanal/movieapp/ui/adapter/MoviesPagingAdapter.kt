@@ -1,6 +1,8 @@
 package ubr.persanal.movieapp.ui.adapter
 
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -10,10 +12,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import ubr.persanal.movieapp.BuildConfig
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.ItemMovieBinding
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
+import ubr.persanal.movieapp.util.BitmapConverter
 import ubr.persanal.movieapp.util.getDateFrom
 
 class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<MoviePageItemDto,MoviesPagingAdapter.ViewHolder>(diffUtil) {
@@ -68,8 +73,31 @@ class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<Mov
                 itemBinding.progressRating.progressBackgroundColor = ContextCompat.getColor(context,R.color.progress_bg_yellow)
             }
 
-            Glide.with(itemBinding.root).load(BuildConfig.IMAGE_URL + itemDto.poster_path)
-                .into(itemBinding.itemImage)
+            val resImage = if (itemDto.is_favorote == true) R.drawable.ic_favorite else R.drawable.ic_favorite_border
+
+
+            itemBinding.favoriteButton.setImageResource(resImage)
+
+            var bitmap:Bitmap? = null
+
+                Glide.with(itemBinding.root)
+                .asBitmap()
+                .load(BuildConfig.IMAGE_URL + itemDto.poster_path)
+                .into(object :CustomTarget<Bitmap>(){
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        bitmap = resource
+
+                        itemBinding.itemImage.setImageBitmap(resource)
+
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) { }
+
+                })
+
 
             itemBinding.movieItem.setOnClickListener {
                 listener.selectMovieItem(itemDto)
@@ -77,7 +105,13 @@ class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<Mov
 
             itemBinding.favoriteButton.setOnClickListener {
 
-                listener.saveToFavorite(itemDto)
+                if (itemDto.is_favorote == false && bitmap != null){
+
+                    itemDto.imageString = BitmapConverter.converterBitmapToString(bitmap!!)
+                }
+
+                listener.saveToFavorite(itemDto, bindingAdapterPosition)
+
             }
 
 
@@ -108,7 +142,7 @@ class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<Mov
     interface Callback {
         fun selectMovieItem(dto: MoviePageItemDto)
 
-        fun saveToFavorite(dto: MoviePageItemDto)
+        fun saveToFavorite(dto: MoviePageItemDto, position: Int)
     }
 
 
