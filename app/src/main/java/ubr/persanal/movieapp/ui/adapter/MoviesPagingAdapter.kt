@@ -3,6 +3,7 @@ package ubr.persanal.movieapp.ui.adapter
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -18,8 +19,8 @@ import ubr.persanal.movieapp.BuildConfig
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.ItemMovieBinding
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
+import ubr.persanal.movieapp.extentions.getDateFrom
 import ubr.persanal.movieapp.util.BitmapConverter
-import ubr.persanal.movieapp.util.getDateFrom
 
 class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<MoviePageItemDto,MoviesPagingAdapter.ViewHolder>(diffUtil) {
 
@@ -78,25 +79,37 @@ class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<Mov
 
             itemBinding.favoriteButton.setImageResource(resImage)
 
-            var bitmap:Bitmap? = null
+            var bitmap:Bitmap? = BitmapConverter.converterStringToBitmap(itemDto.imageString)
+
+            if (bitmap!= null){
+
+                itemBinding.itemImage.setImageBitmap(bitmap)
+
+                Log.d("TAG_ADAPTER", "bitmap: $bitmap ")
+
+
+            }else{
 
                 Glide.with(itemBinding.root)
-                .asBitmap()
-                .load(BuildConfig.IMAGE_URL + itemDto.poster_path)
-                .into(object :CustomTarget<Bitmap>(){
-                    override fun onResourceReady(
-                        resource: Bitmap,
-                        transition: Transition<in Bitmap>?
-                    ) {
-                        bitmap = resource
+                    .asBitmap()
+                    .load(BuildConfig.IMAGE_URL + itemDto.poster_path)
+                    .skipMemoryCache(true)
+                    .into(object :CustomTarget<Bitmap>(){
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            transition: Transition<in Bitmap>?
+                        ) {
+                            bitmap = resource
 
-                        itemBinding.itemImage.setImageBitmap(resource)
+                            itemBinding.itemImage.setImageBitmap(resource)
 
-                    }
+                        }
 
-                    override fun onLoadCleared(placeholder: Drawable?) { }
+                        override fun onLoadCleared(placeholder: Drawable?) { }
 
-                })
+                    })
+            }
+
 
 
             itemBinding.movieItem.setOnClickListener {

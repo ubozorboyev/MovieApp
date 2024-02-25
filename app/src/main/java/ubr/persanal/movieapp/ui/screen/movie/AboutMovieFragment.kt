@@ -17,9 +17,9 @@ import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.AboutMovieFragmentBinding
 import ubr.persanal.movieapp.domain.model.ActorItemDto
 import ubr.persanal.movieapp.domain.model.MovieDetailsDto
+import ubr.persanal.movieapp.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.ActorsAdapter
 import ubr.persanal.movieapp.util.ResourceUI
-import ubr.persanal.movieapp.util.showSnack
 import java.lang.Exception
 
 @AndroidEntryPoint

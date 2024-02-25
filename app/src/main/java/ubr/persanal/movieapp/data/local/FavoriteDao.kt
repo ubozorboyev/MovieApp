@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface FavoriteDao {
 
     @Query("SELECT * FROM movie_table ORDER BY id LIMIT :limit OFFSET :offset")
-    suspend fun getFavoriteMovies(limit:Int, offset:Int):List<MoviePageItemEntity>
+    fun getFavoriteMovies(limit:Int, offset:Int):List<MoviePageItemEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addFavoriteMoviesList(item: List<MoviePageItemEntity>):List<Long>
@@ -23,7 +23,7 @@ interface FavoriteDao {
     fun  getIDsFromFavoriteList():List<Long>
 
     @Query("DELETE FROM movie_table WHERE id== :movieId")
-    fun deleteFavoriteMovie(movieId: Long)
+    fun deleteFavoriteMovie(movieId: Long):Int
     @Query("DELETE FROM movie_table")
     fun deleteTable()
 

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.FragmentTopRatedBinding
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
+import ubr.persanal.movieapp.extentions.isNetworkAvailable
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
 
 @AndroidEntryPoint
@@ -34,6 +36,9 @@ class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews()
+
+        binding.iconOffline.isVisible = !requireContext().isNetworkAvailable()
+
 
 //        viewModel.dataList.observe(viewLifecycleOwner) {
 //

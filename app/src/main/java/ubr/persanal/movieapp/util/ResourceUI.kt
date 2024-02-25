@@ -17,24 +17,3 @@ sealed class ResourceUI<out T> {
 }
 
 
-fun String.toast(context: Context) {
-    Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
-}
-
-fun String.showSnack(view: View) {
-    Snackbar.make(view, this, Snackbar.LENGTH_SHORT).show()
-}
-
-
-@SuppressLint("SimpleDateFormat")
-fun String.getDateFrom(): String {
-
-    return try {
-        val dateInput = SimpleDateFormat("yyyy-MM-dd")
-        val dateOutput = SimpleDateFormat("MMM dd, yyyy")
-        dateOutput.format(dateInput.parse(this)!!)
-
-    } catch (e: Exception) {
-        e.message.toString()
-    }
-}

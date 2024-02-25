@@ -19,11 +19,11 @@ import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.FragmentPopularBinding
 import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
+import ubr.persanal.movieapp.extentions.isNetworkAvailable
+import ubr.persanal.movieapp.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
-import ubr.persanal.movieapp.util.BitmapConverter
 import ubr.persanal.movieapp.util.MediaType
 import ubr.persanal.movieapp.util.ResourceUI
-import ubr.persanal.movieapp.util.showSnack
 
 
 @AndroidEntryPoint
@@ -51,6 +51,8 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         binding.recyclerView.adapter = adapter
+
+        binding.iconOffline.isVisible = !requireContext().isNetworkAvailable()
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             adapter.refresh()
@@ -91,6 +93,7 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
                     it.error?.showSnack(binding.root)
                 }
                 is ResourceUI.Resource ->{
+
                     binding.progressBar.isVisible = false
 
                     adapter.notifyItemChanged(currentPosition)

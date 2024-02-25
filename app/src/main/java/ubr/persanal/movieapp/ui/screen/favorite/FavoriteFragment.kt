@@ -1,6 +1,7 @@
 package ubr.persanal.movieapp.ui.screen.favorite
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,16 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.paging.map
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.FragmentFavoriteBinding
 import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
+import ubr.persanal.movieapp.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
 import ubr.persanal.movieapp.util.MediaType
 import ubr.persanal.movieapp.util.ResourceUI
-import ubr.persanal.movieapp.util.showSnack
 
 @AndroidEntryPoint
 class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
@@ -29,6 +31,8 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
     private val viewModel by viewModels<FavoriteViewModel>()
 
     private val adapter = MoviesPagingAdapter(this)
+
+    private var currentPosition = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,7 +88,6 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
                     is ResourceUI.Resource ->{
 
                         adapter.refresh()
-
                         binding.progressBar.isVisible = false
 
                     }
@@ -117,6 +120,7 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
         dto.id?.let {
 
+            currentPosition = position
             val requestDto = FavoriteRequestDto(
                 favorite = false,
                 mediaId = it.toInt(),
