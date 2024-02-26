@@ -11,16 +11,22 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.domain.model.MoviePagingDto
+import ubr.persanal.movieapp.domain.model.SuccessDto
 import ubr.persanal.movieapp.domain.usecase.GetTopRatedFilmsUseCase
+import ubr.persanal.movieapp.domain.usecase.SetMovieFavoriteUseCase
 import ubr.persanal.movieapp.ui.source.TopRatedMoviePageDataSource
 import ubr.persanal.movieapp.util.ResourceUI
 import javax.inject.Inject
 
 @HiltViewModel
-class TopRatedViewModel @Inject constructor(private val topRatedUseCase: GetTopRatedFilmsUseCase) :
+class TopRatedViewModel @Inject constructor(
+    private val topRatedUseCase: GetTopRatedFilmsUseCase,
+    private val setMovieFavoriteUseCase: SetMovieFavoriteUseCase, ) :
     ViewModel() {
 
     private val _dataList: MutableLiveData<ResourceUI<MoviePagingDto>> =
@@ -28,12 +34,11 @@ class TopRatedViewModel @Inject constructor(private val topRatedUseCase: GetTopR
 
     val dataList: LiveData<ResourceUI<MoviePagingDto>> = _dataList
 
+    private val _successFavorite = MutableLiveData<ResourceUI<SuccessDto>>()
+    val successFavorite: LiveData<ResourceUI<SuccessDto>> = _successFavorite
 
-    init {
-        fetchData()
-        Log.d("ViewModel", "TopRatedViewModel: ")
 
-    }
+
 
     val topRatedListPager: Flow<PagingData<MoviePageItemDto>> =
 
@@ -42,13 +47,18 @@ class TopRatedViewModel @Inject constructor(private val topRatedUseCase: GetTopR
 
         }.flow.cachedIn(viewModelScope)
 
-     fun fetchData() {
-        viewModelScope.launch {
-            topRatedUseCase.invoke(1).collect {
-                _dataList.postValue(it)
-            }
 
+
+    fun setFavoriteMovie(requestDto: FavoriteRequestDto, itemDto: MoviePageItemDto){
+
+        viewModelScope.launch {
+
+            setMovieFavoriteUseCase.invoke(requestDto, itemDto).collectLatest {
+
+                _successFavorite.value = it
+            }
         }
+
     }
 
 }

@@ -7,18 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.paging.map
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.FragmentFavoriteBinding
 import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
-import ubr.persanal.movieapp.extentions.showSnack
+import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
+import ubr.persanal.movieapp.ui.screen.SharedViewModel
 import ubr.persanal.movieapp.util.MediaType
 import ubr.persanal.movieapp.util.ResourceUI
 
@@ -30,9 +34,11 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
     private val viewModel by viewModels<FavoriteViewModel>()
 
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
+
+
     private val adapter = MoviesPagingAdapter(this)
 
-    private var currentPosition = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +66,20 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
     private fun observerParameters(){
 
+
+        lifecycleScope.launch {
+
+            sharedViewModel.updatePagingData.collectLatest {
+
+                Log.d("TAG_SHARED_DATA", "FavoriteFragment: $it")
+
+                if (it) adapter.refresh()
+
+            }
+
+        }
+
+
         lifecycleScope.launch {
 
             viewModel.favoriteListPager.collect {
@@ -70,6 +90,7 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
             }
         }
+
 
         lifecycleScope.launch {
 
@@ -86,8 +107,7 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
                     }
                     is ResourceUI.Resource ->{
-
-                        adapter.refresh()
+                        sharedViewModel.updateUiPagingData(true)
                         binding.progressBar.isVisible = false
 
                     }
@@ -120,7 +140,7 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
         dto.id?.let {
 
-            currentPosition = position
+
             val requestDto = FavoriteRequestDto(
                 favorite = false,
                 mediaId = it.toInt(),

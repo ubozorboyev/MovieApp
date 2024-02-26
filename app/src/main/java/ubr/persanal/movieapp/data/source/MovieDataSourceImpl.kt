@@ -21,7 +21,7 @@ import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.domain.model.MoviePagingDto
 import ubr.persanal.movieapp.domain.model.SuccessDto
 import ubr.persanal.movieapp.domain.source.MovieDataSource
-import ubr.persanal.movieapp.extentions.isNetworkAvailable
+import ubr.persanal.movieapp.util.extentions.isNetworkAvailable
 import ubr.persanal.movieapp.util.BitmapConverter
 import ubr.persanal.movieapp.util.ResourceUI
 import ubr.persanal.onlineshop.data.api.MoviesApiService
@@ -118,69 +118,6 @@ class MovieDataSourceImpl @Inject constructor(
                 val moviePageItemDto = MoviePagingDto(page, list.map { it.toDto() }, page, list.size)
 
                 send(ResourceUI.Resource(moviePageItemDto))
-
-
-
-//                val response = moviesApiService.getFavoriteMovies(BuildConfig.ACCOUNT_ID.toInt(),BuildConfig.API_KEY,BuildConfig.SESSION_ID,page)
-//
-//
-//
-//                if (response.isSuccessful){
-////
-//                    response.body()?.let {pageResponse->
-//
-//                        val listIds = favoriteDao.getIDsFromFavoriteList()
-//
-//                        listIds.forEach {
-//                            if (!pageResponse.results.map { it.id }.contains(it)){
-//                                favoriteDao.deleteFavoriteMovie(it)
-//                            }
-//
-//                        }
-//
-//                        pageResponse.results.forEach { moviePageItem ->
-//
-//                            if (!listIds.contains(moviePageItem.id)){
-//
-//                                withContext(Dispatchers.IO){
-//
-//                                    val bitmap = Glide.with(context)
-//                                        .asBitmap()
-//                                        .load(BuildConfig.IMAGE_URL + moviePageItem.backdrop_path)
-//                                        .submit()
-//                                        .get()
-//
-//                                    val entity = moviePageItem.toEntity()
-//
-//                                    entity.also {
-//
-//                                        it.imageString = BitmapConverter.converterBitmapToString(bitmap)
-//                                        it.is_favorote = true
-//
-//                                    }
-//
-//                                    favoriteDao.addFavoriteMovie(entity)
-//
-//                                }
-//
-//
-//                            }
-//
-//                        }
-//
-//                    }
-//
-//                    val list = favoriteDao.getFavoriteMovies(10,page* 10)
-//
-//                    val moviePageItemDto = MoviePagingDto(page, list.map { it.toDto() }, page, list.size)
-//
-//                    emit(ResourceUI.Resource(moviePageItemDto))
-//
-//
-//                }
-//                else {
-//                    emit(ResourceUI.Error(response.message()))
-//                }
 
 
         } catch (e: Exception) {
@@ -324,11 +261,6 @@ class MovieDataSourceImpl @Inject constructor(
 
 
         } catch (e: Exception) {
-
-//            if (!context.isNetworkAvailable()) {
-//
-//                emit(ResourceUI.Error(context.getString(R.string.no_access_network)))
-//            }
 
             e.printStackTrace()
         }

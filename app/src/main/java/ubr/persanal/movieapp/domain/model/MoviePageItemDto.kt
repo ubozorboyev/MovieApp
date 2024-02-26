@@ -33,7 +33,7 @@ data class MoviePageItemDto(
 
     val vote_count: Int? = null,
 
-    var is_favorote: Boolean? = false,
+    var is_favorote: Boolean? = null,
 
     var imageString: String? = null,
 

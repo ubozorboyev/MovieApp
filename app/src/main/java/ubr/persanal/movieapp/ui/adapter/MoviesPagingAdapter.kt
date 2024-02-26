@@ -19,10 +19,13 @@ import ubr.persanal.movieapp.BuildConfig
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.ItemMovieBinding
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
-import ubr.persanal.movieapp.extentions.getDateFrom
+import ubr.persanal.movieapp.util.extentions.getDateFrom
+import ubr.persanal.movieapp.util.extentions.roundOffDecimal
 import ubr.persanal.movieapp.util.BitmapConverter
+import ubr.persanal.movieapp.util.extentions.isNetworkAvailable
 
-class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<MoviePageItemDto,MoviesPagingAdapter.ViewHolder>(diffUtil) {
+class MoviesPagingAdapter(private val listener:Callback) :
+    PagingDataAdapter<MoviePageItemDto,MoviesPagingAdapter.ViewHolder>(diffUtil) {
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -53,39 +56,25 @@ class MoviesPagingAdapter(private val listener:Callback) : PagingDataAdapter<Mov
 
                 realiseDate.text = itemDto.release_date?.getDateFrom()
 
-                progressRating.setProgress((itemDto.vote_average?:0.0) * 10, 100.0)
+                ratingAverage.text = itemDto.vote_average?.roundOffDecimal().toString()
 
-                progressRating.setProgressTextAdapter(CircularProgressIndicator.ProgressTextAdapter {
-                    return@ProgressTextAdapter "${it.toInt()} %"
-                })
             }
 
-            val context = itemBinding.root.context
-
-            if ((itemDto.vote_average?.toInt()?: 0) * 10 >= 70) {
-
-                itemBinding.progressRating.dotColor = ContextCompat.getColor(context,R.color.progress_green)
-
-                itemBinding.progressRating.progressColor = ContextCompat.getColor(context,R.color.progress_green)
-                itemBinding.progressRating.progressBackgroundColor = ContextCompat.getColor(context,R.color.progress_bg_green)
-            } else {
-                itemBinding.progressRating.dotColor = ContextCompat.getColor(context,R.color.progress_yellow)
-                itemBinding.progressRating.progressColor = ContextCompat.getColor(context,R.color.progress_yellow)
-                itemBinding.progressRating.progressBackgroundColor = ContextCompat.getColor(context,R.color.progress_bg_yellow)
-            }
 
             val resImage = if (itemDto.is_favorote == true) R.drawable.ic_favorite else R.drawable.ic_favorite_border
 
 
             itemBinding.favoriteButton.setImageResource(resImage)
 
-            var bitmap:Bitmap? = BitmapConverter.converterStringToBitmap(itemDto.imageString)
+            var bitmap:Bitmap? = null
 
-            if (bitmap!= null){
+            val isOffline = itemView.context.isNetworkAvailable().not()
+
+            if (itemDto.is_favorote == true && isOffline){
+
+                bitmap = BitmapConverter.converterStringToBitmap(itemDto.imageString)
 
                 itemBinding.itemImage.setImageBitmap(bitmap)
-
-                Log.d("TAG_ADAPTER", "bitmap: $bitmap ")
 
 
             }else{

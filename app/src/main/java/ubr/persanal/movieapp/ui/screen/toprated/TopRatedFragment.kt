@@ -1,28 +1,43 @@
 package ubr.persanal.movieapp.ui.screen.toprated
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.FragmentTopRatedBinding
+import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
-import ubr.persanal.movieapp.extentions.isNetworkAvailable
+import ubr.persanal.movieapp.util.extentions.isNetworkAvailable
+import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
+import ubr.persanal.movieapp.ui.screen.SharedViewModel
+import ubr.persanal.movieapp.util.MediaType
+import ubr.persanal.movieapp.util.ResourceUI
 
 @AndroidEntryPoint
 class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
 
     private lateinit var binding: FragmentTopRatedBinding
-    val viewModel by viewModels<TopRatedViewModel>()
+
+    private val viewModel by viewModels<TopRatedViewModel>()
+
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
+
     private val adapter = MoviesPagingAdapter(this)
+    private var currentPosition = -1
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,7 +90,27 @@ class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
             adapter.refresh()
         }
 
-        lifecycleScope.launchWhenCreated {
+
+        setUpObservers()
+
+
+
+    }
+
+    private fun setUpObservers(){
+
+
+        lifecycleScope.launch {
+
+            sharedViewModel.updatePagingData.collectLatest {
+
+
+                if (it) adapter.refresh()
+
+            }
+
+        }
+        lifecycleScope.launch {
 
             viewModel.topRatedListPager.collect {
 
@@ -86,7 +121,27 @@ class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
             }
         }
 
+        viewModel.successFavorite.observe(viewLifecycleOwner){
 
+            when(it){
+                is ResourceUI.Loading ->{
+                    binding.progressBar.isVisible = true
+                }
+                is ResourceUI.Error ->{
+                    binding.progressBar.isVisible = false
+
+                    it.error?.showSnack(binding.root)
+                }
+                is ResourceUI.Resource ->{
+
+                    sharedViewModel.updateUiPagingData(true)
+
+                    binding.progressBar.isVisible = false
+
+                }
+
+            }
+        }
     }
 
 
@@ -108,6 +163,18 @@ class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
 
     override fun saveToFavorite(dto: MoviePageItemDto, position:Int) {
 
+        dto.id?.let {
+
+            currentPosition = position
+
+            val requestDto = FavoriteRequestDto(
+                favorite = (dto.is_favorote ?: false).not(),
+                mediaId = dto.id.toInt(),
+                mediaType = MediaType.movie.name,
+            )
+
+            viewModel.setFavoriteMovie(requestDto, dto)
+        }
     }
 
 }

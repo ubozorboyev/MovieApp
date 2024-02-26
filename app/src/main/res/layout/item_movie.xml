@@ -58,39 +58,43 @@
                 android:textColor="@color/overview_text_color"
                 android:textSize="12sp" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/realiseDate"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/gilroy_medium"
+                android:maxLines="4"
                 android:layout_marginHorizontal="10dp"
-                android:layout_marginBottom="10dp"
-                android:orientation="horizontal">
+                tools:text="Dec 15, 2021"
+                android:textColor="#F1F1F2"
+                android:textSize="13sp" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/realiseDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:fontFamily="@font/gilroy_medium"
-                    android:maxLines="4"
-                    tools:text="Dec 15, 2021"
-                    android:textColor="#F1F1F2"
-                    android:textSize="13sp" />
-
-
-
-
-            </FrameLayout>
 
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/rating_average"
+                    android:drawableStart="@drawable/ic_star"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
                 <antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
                     android:id="@+id/progressRating"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:visibility="gone"
                     android:layout_gravity="start"
                     app:progressCap="butt"
                     android:layout_marginStart="10dp"
@@ -104,8 +108,8 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/favorite_button"
-                    android:layout_marginEnd="10dp"
-                    android:padding="10dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
                     android:src="@drawable/ic_favorite_border"
                     android:layout_gravity="end|center_vertical"
                     android:layout_width="wrap_content"

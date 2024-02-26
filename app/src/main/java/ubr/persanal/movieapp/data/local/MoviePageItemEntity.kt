@@ -52,7 +52,7 @@ data class MoviePageItemEntity(
     var vote_count: Int? = null,
 
     @ColumnInfo("is_favorote")
-    var is_favorote: Boolean? = false,
+    var is_favorote: Boolean? = null,
 
     @ColumnInfo("image_string")
     var imageString: String? = null,

@@ -17,7 +17,7 @@ import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.AboutMovieFragmentBinding
 import ubr.persanal.movieapp.domain.model.ActorItemDto
 import ubr.persanal.movieapp.domain.model.MovieDetailsDto
-import ubr.persanal.movieapp.extentions.showSnack
+import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.ActorsAdapter
 import ubr.persanal.movieapp.util.ResourceUI
 import java.lang.Exception
@@ -93,6 +93,7 @@ class AboutMovieFragment : Fragment(), ActorsAdapter.CallBack {
     private fun setDetail(data: MovieDetailsDto) {
         try {
 
+            Log.d("TAG_VOTE_COUNT", "setDetail: ${data.vote_count}")
             binding.movieVote.text = data.vote_count.toString()
 
             binding.toolBar.title = data.title

@@ -19,7 +19,6 @@ class BottomNavigationFragment : Fragment() {
     private lateinit var binding: BottomNavigationFragmentBinding
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,7 +51,6 @@ class BottomNavigationFragment : Fragment() {
             navController.navigate(item.itemId, null, navOptions)
             true
         }
-
 
     }
 

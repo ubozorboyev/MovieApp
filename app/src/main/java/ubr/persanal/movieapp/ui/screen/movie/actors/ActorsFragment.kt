@@ -14,8 +14,8 @@ import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.FragmentActorsBinding
 import ubr.persanal.movieapp.domain.model.ActorDetailDto
 import ubr.persanal.movieapp.domain.model.MovieByActorItemDto
-import ubr.persanal.movieapp.extentions.getDateFrom
-import ubr.persanal.movieapp.extentions.showSnack
+import ubr.persanal.movieapp.util.extentions.getDateFrom
+import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MovieByActorAdapter
 import ubr.persanal.movieapp.util.ResourceUI
 

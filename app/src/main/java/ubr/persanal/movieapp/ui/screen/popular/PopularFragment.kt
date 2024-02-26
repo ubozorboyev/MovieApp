@@ -7,21 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import com.bumptech.glide.Glide
+import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import ubr.persanal.movieapp.BuildConfig
 import ubr.persanal.movieapp.R
 import ubr.persanal.movieapp.databinding.FragmentPopularBinding
 import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
-import ubr.persanal.movieapp.extentions.isNetworkAvailable
-import ubr.persanal.movieapp.extentions.showSnack
+import ubr.persanal.movieapp.util.extentions.isNetworkAvailable
+import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
+import ubr.persanal.movieapp.ui.screen.SharedViewModel
 import ubr.persanal.movieapp.util.MediaType
 import ubr.persanal.movieapp.util.ResourceUI
 
@@ -30,7 +32,11 @@ import ubr.persanal.movieapp.util.ResourceUI
 class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
     private lateinit var binding: FragmentPopularBinding
+
     private val viewModel by viewModels<PopularViewModel>()
+
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
+
 
     private val adapter = MoviesPagingAdapter(this)
 
@@ -59,18 +65,7 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
         }
 
-        lifecycleScope.launch {
 
-            viewModel.popularListPager.collect {
-
-                adapter.submitData(it)
-
-                binding.swipeRefreshLayout.isRefreshing = false
-
-            }
-        }
-
-        //adapter.withLoadStateFooter(LoadStateAdapter())
 
         lifecycleScope.launch {
 
@@ -79,6 +74,28 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
             }
         }
+
+        setUpObservables()
+
+
+
+    }
+
+    private fun setUpObservables(){
+
+
+        lifecycleScope.launch {
+
+            sharedViewModel.updatePagingData.collectLatest {
+
+                Log.d("TAG_SHARED_DATA", "PopularFragment: $it")
+
+                if (it) adapter.refresh()
+
+            }
+
+        }
+
 
 
         viewModel.successFavorite.observe(viewLifecycleOwner){
@@ -96,9 +113,23 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
                     binding.progressBar.isVisible = false
 
-                    adapter.notifyItemChanged(currentPosition)
+                    sharedViewModel.updateUiPagingData(true)
+
+                    //adapter.notifyItemChanged(currentPosition)
 
                 }
+
+            }
+        }
+
+
+        lifecycleScope.launch {
+
+            viewModel.popularListPager.collect {
+
+                adapter.submitData(it)
+
+                binding.swipeRefreshLayout.isRefreshing = false
 
             }
         }
@@ -117,25 +148,23 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
     override fun saveToFavorite(dto: MoviePageItemDto, position:Int) {
 
-        lifecycleScope.launch {
+         dto.id?.let {
 
-            dto.id?.let {
+             currentPosition = position
 
-                currentPosition = position
+             val requestDto = FavoriteRequestDto(
+                 favorite = (dto.is_favorote ?: false).not(),
+                 mediaId = dto.id.toInt(),
+                 mediaType = MediaType.movie.name,
+                 )
 
-                val requestDto = FavoriteRequestDto(
-                    favorite = (dto.is_favorote ?: false).not(),
-                    mediaId = dto.id.toInt(),
-                    mediaType = MediaType.movie.name,
-                )
-
-                viewModel.setFavoriteMovie(requestDto, dto)
-            }
+             viewModel.setFavoriteMovie(requestDto, dto)
+         }
 
 
-        }
 
     }
+
 
 
     override fun onDestroyView() {

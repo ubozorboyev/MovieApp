@@ -1,4 +1,4 @@
-package ubr.persanal.movieapp.extentions
+package ubr.persanal.movieapp.util.extentions
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,6 +8,8 @@ import android.os.Build
 import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
 fun Context.isConnected() : Boolean {
@@ -51,6 +53,11 @@ fun String.showSnack(view: View) {
     Snackbar.make(view, this, Snackbar.LENGTH_SHORT).show()
 }
 
+fun Double.roundOffDecimal(): Double {
+    val df = DecimalFormat("#.##")
+    df.roundingMode = RoundingMode.CEILING
+    return df.format(this).toDouble()
+}
 
 @SuppressLint("SimpleDateFormat")
 fun String.getDateFrom(): String {
