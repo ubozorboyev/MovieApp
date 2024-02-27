@@ -1,19 +1,13 @@
 package ubr.persanal.movieapp.ui.source
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import ubr.persanal.movieapp.common.Common
-import ubr.persanal.movieapp.common.Common.START_PAGE
+import kotlinx.coroutines.delay
+import ubr.persanal.movieapp.data.local.FavoriteDao
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
-import ubr.persanal.movieapp.domain.model.MoviePagingDto
-import ubr.persanal.movieapp.domain.usecase.GetMoviesFavoriteUseCase
-import ubr.persanal.movieapp.domain.usecase.GetUpComingFilmsUseCase
-import ubr.persanal.movieapp.util.ResourceUI
-import java.lang.NullPointerException
 
 class FavoriteMoviePageDataSource constructor(
-    private val useCase: GetMoviesFavoriteUseCase
+    private val favoriteDao: FavoriteDao
 ) : PagingSource<Int, MoviePageItemDto>() {
 
 
@@ -26,54 +20,29 @@ class FavoriteMoviePageDataSource constructor(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MoviePageItemDto> {
 
-        val currentPageKey = params.key ?: START_PAGE
 
-        val prevKey = if (currentPageKey == Common.START_PAGE) null else currentPageKey - 1
+        return try {
 
-        var result: ResourceUI<MoviePagingDto>? = null
+            val currentPageKey = params.key ?: 0
 
-        Log.d("PageDataSource","currentPageKey  =  $currentPageKey")
+            val entities = favoriteDao.getFavoriteMovies(params.loadSize,currentPageKey*params.loadSize)
 
-        useCase.invoke(currentPageKey).collect {
+            delay(500) // for showing page loading
 
 
-            result = it
+            return LoadResult.Page(
+                data  = entities.map { it.toDto() },
+                prevKey = if (currentPageKey == 0) null else currentPageKey -1,
+                nextKey = if(entities.isEmpty()) null else currentPageKey + 1
 
+            )
+        }catch (e:Exception){
+
+            LoadResult.Error(Throwable(e.message))
         }
 
-        return when(result){
-
-            is ResourceUI.Error ->{
-
-                val throwable = (result as ResourceUI.Error).error
-
-                LoadResult.Error(Throwable(throwable))
-            }
-
-            is ResourceUI.Resource -> {
-
-                val data = (result as ResourceUI.Resource<MoviePagingDto>).data
-
-                Log.d("PageDataSource","size  =  ${data?.results?.size}")
 
 
-                val totalPages = data?.total_pages
-
-                val template = currentPageKey.plus(1)
-
-                val nextKey = if (template < (totalPages ?: 0)) template else null
-
-                if (data!= null)
-                    LoadResult.Page(data.results, prevKey, nextKey)
-
-                else LoadResult.Error(NullPointerException())
-
-            }
-
-            else -> {
-                LoadResult.Error(NullPointerException())
-            }
-        }
 
     }
 

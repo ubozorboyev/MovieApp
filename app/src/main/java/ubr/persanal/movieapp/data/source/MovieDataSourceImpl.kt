@@ -107,17 +107,23 @@ class MovieDataSourceImpl @Inject constructor(
 
     }
 
-    override suspend fun getFavoriteFilms(page: Int): Flow<ResourceUI<MoviePagingDto>>  = channelFlow{
+    override suspend fun getFavoriteFilms(page: Int): Flow<ResourceUI<MoviePagingDto>>  = flow{
 
-        send(ResourceUI.Loading)
+        emit(ResourceUI.Loading)
 
         try {
 
-            val list = favoriteDao.getFavoriteMovies(10, (page-1)* 10)
+            val response = moviesApiService.getFavoriteMovies(
+                BuildConfig.ACCOUNT_ID.toInt(), BuildConfig.API_KEY, BuildConfig.SESSION_ID, page
+            )
 
-                val moviePageItemDto = MoviePagingDto(page, list.map { it.toDto() }, page+2, list.size)
+            if (response.isSuccessful){
 
-                send(ResourceUI.Resource(moviePageItemDto))
+                emit(ResourceUI.Resource(response.body()?.toDto()))
+
+            }
+            else
+                emit(ResourceUI.Error(response.message()))
 
 
         } catch (e: Exception) {

@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ubr.persanal.movieapp.data.local.FavoriteDao
 import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.domain.model.SuccessDto
@@ -25,6 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
     private val getMoviesUseCase: GetMoviesFavoriteUseCase,
+    private val favoriteDao: FavoriteDao,
     private val setMovieFavoriteUseCase: SetMovieFavoriteUseCase,
 
 ): ViewModel(){
@@ -35,8 +37,8 @@ class FavoriteViewModel @Inject constructor(
 
     val favoriteListPager: Flow<PagingData<MoviePageItemDto>> =
 
-        Pager(PagingConfig(pageSize = 10, enablePlaceholders = true)) {
-            FavoriteMoviePageDataSource(getMoviesUseCase)
+        Pager(PagingConfig(pageSize = 10, enablePlaceholders = true, initialLoadSize = 10 )) {
+            FavoriteMoviePageDataSource(favoriteDao)
 
         }.flow.cachedIn(viewModelScope)
 

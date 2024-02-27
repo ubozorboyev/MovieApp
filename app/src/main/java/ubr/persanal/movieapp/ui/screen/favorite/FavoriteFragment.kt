@@ -13,6 +13,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.paging.map
+import androidx.recyclerview.widget.ConcatAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -22,6 +23,7 @@ import ubr.persanal.movieapp.domain.model.FavoriteRequestDto
 import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
+import ubr.persanal.movieapp.ui.adapter.PagingLoadStateAdapter
 import ubr.persanal.movieapp.ui.screen.SharedViewModel
 import ubr.persanal.movieapp.util.MediaType
 import ubr.persanal.movieapp.util.ResourceUI
@@ -51,17 +53,39 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding.recyclerView.adapter = adapter
+
+        initViews()
+
+        observerParameters()
+
+    }
+
+    private fun initViews(){
+
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             adapter.refresh()
 
         }
 
-        observerParameters()
+        val headerStateAdapter = PagingLoadStateAdapter {
+            adapter.retry()
+        }
+
+        val footerStateAdapter = PagingLoadStateAdapter {
+            adapter.retry()
+        }
+
+        adapter.addLoadStateListener { loadStates ->
+            headerStateAdapter.loadState = loadStates.refresh
+            footerStateAdapter.loadState = loadStates.append
+        }
+
+        val concatAdapter = ConcatAdapter(headerStateAdapter, adapter, footerStateAdapter)
 
 
 
+        binding.recyclerView.adapter = concatAdapter
     }
 
     private fun observerParameters(){
