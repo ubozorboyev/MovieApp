@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -22,6 +23,7 @@ import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.util.extentions.isNetworkAvailable
 import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
+import ubr.persanal.movieapp.ui.adapter.PagingLoadStateAdapter
 import ubr.persanal.movieapp.ui.screen.SharedViewModel
 import ubr.persanal.movieapp.util.MediaType
 import ubr.persanal.movieapp.util.ResourceUI
@@ -50,48 +52,47 @@ class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+
+
         initViews()
+
+        setUpObservers()
+
+    }
+
+
+
+    private fun initViews() {
 
         binding.iconOffline.isVisible = !requireContext().isNetworkAvailable()
 
 
-//        viewModel.dataList.observe(viewLifecycleOwner) {
-//
-//            when (it) {
-//                is ResourceUI.Loading -> {
-//                    binding.progressBar.visibility = View.VISIBLE
-//                }
-//                is ResourceUI.Resource -> {
-//                    binding.swipeRefreshLayout.isRefreshing = false
-//                    binding.progressBar.visibility = View.INVISIBLE
-//                    it.data?.let {
-//                        adapter.setData(it.results)
-//                    }
-//                }
-//                is ResourceUI.Error -> {
-//                    binding.swipeRefreshLayout.isRefreshing = false
-//                    binding.progressBar.visibility = View.INVISIBLE
-//                    it.error?.toast(requireContext())
-//                }
-//            }
-//        }
-    }
-
-    private fun initViews() {
-
-
-        binding.recyclerView.adapter = adapter
-
-        val layoutManager = LinearLayoutManager(requireContext())
-
-        binding.recyclerView.layoutManager = layoutManager
-
         binding.swipeRefreshLayout.setOnRefreshListener {
             adapter.refresh()
+
         }
 
+        val headerStateAdapter = PagingLoadStateAdapter {
+            adapter.retry()
+        }
 
-        setUpObservers()
+        val footerStateAdapter = PagingLoadStateAdapter {
+            adapter.retry()
+        }
+
+        adapter.addLoadStateListener { loadStates ->
+            headerStateAdapter.loadState = loadStates.refresh
+            footerStateAdapter.loadState = loadStates.append
+        }
+
+        val concatAdapter = ConcatAdapter(headerStateAdapter, adapter, footerStateAdapter)
+
+
+
+        binding.recyclerView.adapter = concatAdapter
+
+
 
 
 

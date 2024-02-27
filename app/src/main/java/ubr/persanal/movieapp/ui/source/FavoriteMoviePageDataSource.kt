@@ -36,7 +36,6 @@ class FavoriteMoviePageDataSource constructor(
 
         useCase.invoke(currentPageKey).collect {
 
-            Log.d("PageDataSource","result  =  ${it}")
 
             result = it
 
@@ -54,6 +53,9 @@ class FavoriteMoviePageDataSource constructor(
             is ResourceUI.Resource -> {
 
                 val data = (result as ResourceUI.Resource<MoviePagingDto>).data
+
+                Log.d("PageDataSource","size  =  ${data?.results?.size}")
+
 
                 val totalPages = data?.total_pages
 

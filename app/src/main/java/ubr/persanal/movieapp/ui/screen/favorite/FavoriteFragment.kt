@@ -71,8 +71,6 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
             sharedViewModel.updatePagingData.collectLatest {
 
-                Log.d("TAG_SHARED_DATA", "FavoriteFragment: $it")
-
                 if (it) adapter.refresh()
 
             }
@@ -139,7 +137,6 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
 
         dto.id?.let {
-
 
             val requestDto = FavoriteRequestDto(
                 favorite = false,

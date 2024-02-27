@@ -6,5 +6,6 @@
     <string name="pattern">%.0f</string>
     <string name="no_access_network">You are offline mode now !</string>
     <string name="unseccfull">Unseccfull</string>
+    <string name="retry">Retry</string>
 
 </resources>

@@ -41,7 +41,7 @@ class UpComingViewModel @Inject constructor(
 
     val upComingListPager: Flow<PagingData<MoviePageItemDto>> =
 
-        Pager(PagingConfig(pageSize = 10, enablePlaceholders = true)) {
+        Pager(PagingConfig(pageSize = 10, enablePlaceholders = false)) {
             UpComingMoviePageDataSource(useCase)
 
         }.flow.cachedIn(viewModelScope)

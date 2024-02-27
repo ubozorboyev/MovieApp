@@ -11,7 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import by.kirich1409.viewbindingdelegate.viewBinding
+import androidx.recyclerview.widget.ConcatAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -22,6 +22,7 @@ import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.util.extentions.isNetworkAvailable
 import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
+import ubr.persanal.movieapp.ui.adapter.PagingLoadStateAdapter
 import ubr.persanal.movieapp.ui.screen.SharedViewModel
 import ubr.persanal.movieapp.util.MediaType
 import ubr.persanal.movieapp.util.ResourceUI
@@ -29,33 +30,70 @@ import ubr.persanal.movieapp.util.ResourceUI
 @AndroidEntryPoint
 class UpComingFragment : Fragment(R.layout.fragment_upcoming), MoviesPagingAdapter.Callback {
 
-    private val binding by viewBinding(FragmentUpcomingBinding::bind)
+    private lateinit var binding :FragmentUpcomingBinding
 
     private val viewModel by viewModels<UpComingViewModel>()
 
     private val sharedViewModel by activityViewModels<SharedViewModel>()
 
 
+
     private val adapter = MoviesPagingAdapter(this)
 
     private var currentPosition = -1
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        binding = FragmentUpcomingBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding.recyclerView.adapter = adapter
+       // binding.recyclerView.adapter = adapter
 
 
         binding.iconOffline.isVisible = !requireContext().isNetworkAvailable()
 
+
+
+
+        initViews()
+
+        setUpObservers()
+
+    }
+
+    private fun initViews(){
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             adapter.refresh()
 
         }
 
-        setUpObservers()
+        val headerStateAdapter = PagingLoadStateAdapter {
+            adapter.retry()
+        }
 
+        val footerStateAdapter = PagingLoadStateAdapter {
+            adapter.retry()
+        }
+
+        adapter.addLoadStateListener { loadStates ->
+            headerStateAdapter.loadState = loadStates.refresh
+            footerStateAdapter.loadState = loadStates.append
+        }
+
+        val concatAdapter = ConcatAdapter(headerStateAdapter, adapter, footerStateAdapter)
+
+
+
+        binding.recyclerView.adapter = concatAdapter
     }
 
     private fun setUpObservers(){
@@ -66,9 +104,8 @@ class UpComingFragment : Fragment(R.layout.fragment_upcoming), MoviesPagingAdapt
 
             sharedViewModel.updatePagingData.collectLatest {
 
-                Log.d("TAG_SHARED_DATA", "PopularFragment: $it")
 
-                if (it) adapter.refresh()
+                if (it)  adapter.refresh()
 
             }
 
@@ -97,10 +134,11 @@ class UpComingFragment : Fragment(R.layout.fragment_upcoming), MoviesPagingAdapt
                 }
                 is ResourceUI.Resource ->{
 
+                    //adapter.notifyItemChanged(currentPosition)
+
                     binding.progressBar.isVisible = false
 
                     sharedViewModel.updateUiPagingData(true)
-
 
                 }
 

@@ -12,7 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import by.kirich1409.viewbindingdelegate.viewBinding
+import androidx.recyclerview.widget.ConcatAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,6 +23,7 @@ import ubr.persanal.movieapp.domain.model.MoviePageItemDto
 import ubr.persanal.movieapp.util.extentions.isNetworkAvailable
 import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.MoviesPagingAdapter
+import ubr.persanal.movieapp.ui.adapter.PagingLoadStateAdapter
 import ubr.persanal.movieapp.ui.screen.SharedViewModel
 import ubr.persanal.movieapp.util.MediaType
 import ubr.persanal.movieapp.util.ResourceUI
@@ -40,7 +41,6 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
     private val adapter = MoviesPagingAdapter(this)
 
-    private  val TAG = "PopularFragment"
 
     private var currentPosition = -1
 
@@ -56,30 +56,48 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding.recyclerView.adapter = adapter
 
-        binding.iconOffline.isVisible = !requireContext().isNetworkAvailable()
-
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            adapter.refresh()
-
-        }
-
-
-
-        lifecycleScope.launch {
-
-            adapter.loadStateFlow.collectLatest {
-
-
-            }
-        }
+        initViews()
 
         setUpObservables()
 
 
 
     }
+
+    private fun initViews() {
+
+        binding.iconOffline.isVisible = !requireContext().isNetworkAvailable()
+
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            adapter.refresh()
+
+        }
+
+        val headerStateAdapter = PagingLoadStateAdapter {
+            adapter.retry()
+        }
+
+        val footerStateAdapter = PagingLoadStateAdapter {
+            adapter.retry()
+        }
+
+        adapter.addLoadStateListener { loadStates ->
+            headerStateAdapter.loadState = loadStates.refresh
+            footerStateAdapter.loadState = loadStates.append
+        }
+
+        val concatAdapter = ConcatAdapter(headerStateAdapter, adapter, footerStateAdapter)
+
+
+
+        binding.recyclerView.adapter = concatAdapter
+
+
+
+    }
+
 
     private fun setUpObservables(){
 
@@ -88,7 +106,6 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
             sharedViewModel.updatePagingData.collectLatest {
 
-                Log.d("TAG_SHARED_DATA", "PopularFragment: $it")
 
                 if (it) adapter.refresh()
 
@@ -166,9 +183,9 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
     }
 
 
-
     override fun onDestroyView() {
         super.onDestroyView()
+
         binding.recyclerView.adapter = null
 
     }

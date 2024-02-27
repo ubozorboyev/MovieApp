@@ -115,7 +115,7 @@ class MovieDataSourceImpl @Inject constructor(
 
             val list = favoriteDao.getFavoriteMovies(10, (page-1)* 10)
 
-                val moviePageItemDto = MoviePagingDto(page, list.map { it.toDto() }, page, list.size)
+                val moviePageItemDto = MoviePagingDto(page, list.map { it.toDto() }, page+2, list.size)
 
                 send(ResourceUI.Resource(moviePageItemDto))
 
