@@ -38,7 +38,7 @@ class BottomNavigationFragment : Fragment() {
 
         val navOptions: NavOptions = NavOptions.Builder()
             .setLaunchSingleTop(true)
-            .setRestoreState(true)
+            .setRestoreState(false) // true saved fragment state and the I should update all list if somewhere item changed
             .setPopUpTo(
                 navController.graph.startDestinationId,
                 false,

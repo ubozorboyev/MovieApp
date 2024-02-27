@@ -20,6 +20,7 @@ import ubr.persanal.movieapp.domain.model.MovieDetailsDto
 import ubr.persanal.movieapp.util.extentions.showSnack
 import ubr.persanal.movieapp.ui.adapter.ActorsAdapter
 import ubr.persanal.movieapp.util.ResourceUI
+import ubr.persanal.movieapp.util.extentions.isNetworkAvailable
 import java.lang.Exception
 
 @AndroidEntryPoint
@@ -48,6 +49,11 @@ class AboutMovieFragment : Fragment(), ActorsAdapter.CallBack {
     }
 
     private fun initViews() {
+
+        if (requireContext().isNetworkAvailable().not()){
+            binding.movieOverview.text = ContextCompat.getString(requireContext(),R.string.no_access_network)
+        }
+
 
         binding.recyclerViewCasts.adapter = adapter
 
@@ -93,7 +99,6 @@ class AboutMovieFragment : Fragment(), ActorsAdapter.CallBack {
     private fun setDetail(data: MovieDetailsDto) {
         try {
 
-            Log.d("TAG_VOTE_COUNT", "setDetail: ${data.vote_count}")
             binding.movieVote.text = data.vote_count.toString()
 
             binding.toolBar.title = data.title

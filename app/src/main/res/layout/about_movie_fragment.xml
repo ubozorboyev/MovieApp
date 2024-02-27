@@ -156,7 +156,7 @@
                         android:justificationMode="inter_word"
                         android:maxLines="12"
                         android:minHeight="120dp"
-                        android:text="@string/test_overview"
+                        tools:text="@string/test_overview"
                         android:textColor="@color/overview_text_color" />
 
                 </LinearLayout>

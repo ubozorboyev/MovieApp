@@ -106,7 +106,7 @@ class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
             sharedViewModel.updatePagingData.collectLatest {
 
 
-                if (it) adapter.refresh()
+               // if (it) adapter.refresh()
 
             }
 
@@ -135,7 +135,8 @@ class TopRatedFragment : Fragment(), MoviesPagingAdapter.Callback {
                 }
                 is ResourceUI.Resource ->{
 
-                    sharedViewModel.updateUiPagingData(true)
+                    adapter.notifyItemChanged(currentPosition)
+                   // sharedViewModel.updateUiPagingData(true)
 
                     binding.progressBar.isVisible = false
 

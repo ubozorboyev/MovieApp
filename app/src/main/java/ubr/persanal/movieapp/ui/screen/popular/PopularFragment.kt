@@ -106,8 +106,10 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
             sharedViewModel.updatePagingData.collectLatest {
 
+                // if I remove saved item from saved list in an other fragment I should update this fragment list
+                // but always I have to call refresh method and that will update the list
 
-                if (it) adapter.refresh()
+                //if (it) adapter.refresh()
 
             }
 
@@ -130,9 +132,10 @@ class PopularFragment : Fragment(), MoviesPagingAdapter.Callback {
 
                     binding.progressBar.isVisible = false
 
-                    sharedViewModel.updateUiPagingData(true)
+                    adapter.notifyItemChanged(currentPosition)
 
-                    //adapter.notifyItemChanged(currentPosition)
+                    //sharedViewModel.updateUiPagingData(true)
+
 
                 }
 

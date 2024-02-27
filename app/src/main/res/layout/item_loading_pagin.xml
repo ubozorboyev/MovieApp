@@ -24,7 +24,7 @@
         android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
         android:textAlignment="center"
-        android:textColor="#700101"
+        android:textColor="#E16161"
         android:textSize="14sp"
         android:visibility="gone"
         tools:text="Some Error Occurred"
@@ -39,7 +39,7 @@
         android:layout_marginBottom="16dp"
         android:text="@string/retry"
         android:textAllCaps="false"
-        android:textColor="#122278"
+        android:textColor="@color/white"
         android:textSize="16sp" />
 
 </LinearLayout>

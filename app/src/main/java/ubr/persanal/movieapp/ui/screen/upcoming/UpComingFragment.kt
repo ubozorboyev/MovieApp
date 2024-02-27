@@ -55,10 +55,7 @@ class UpComingFragment : Fragment(R.layout.fragment_upcoming), MoviesPagingAdapt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-       // binding.recyclerView.adapter = adapter
 
-
-        binding.iconOffline.isVisible = !requireContext().isNetworkAvailable()
 
 
 
@@ -70,6 +67,8 @@ class UpComingFragment : Fragment(R.layout.fragment_upcoming), MoviesPagingAdapt
     }
 
     private fun initViews(){
+
+        binding.iconOffline.isVisible = !requireContext().isNetworkAvailable()
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             adapter.refresh()
@@ -105,7 +104,7 @@ class UpComingFragment : Fragment(R.layout.fragment_upcoming), MoviesPagingAdapt
             sharedViewModel.updatePagingData.collectLatest {
 
 
-                if (it)  adapter.refresh()
+                //if (it)  adapter.refresh()
 
             }
 
@@ -134,11 +133,11 @@ class UpComingFragment : Fragment(R.layout.fragment_upcoming), MoviesPagingAdapt
                 }
                 is ResourceUI.Resource ->{
 
-                    //adapter.notifyItemChanged(currentPosition)
+                    adapter.notifyItemChanged(currentPosition)
 
                     binding.progressBar.isVisible = false
 
-                    sharedViewModel.updateUiPagingData(true)
+                    //sharedViewModel.updateUiPagingData(true)
 
                 }
 

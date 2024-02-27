@@ -41,6 +41,8 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
     private val adapter = MoviesPagingAdapter(this)
 
+    private var currentPosition =  -1
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -95,7 +97,7 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
             sharedViewModel.updatePagingData.collectLatest {
 
-                if (it) adapter.refresh()
+                //if (it) adapter.refresh() updates list
 
             }
 
@@ -129,7 +131,8 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
                     }
                     is ResourceUI.Resource ->{
-                        sharedViewModel.updateUiPagingData(true)
+                        adapter.notifyItemRemoved(currentPosition)
+                       // sharedViewModel.updateUiPagingData(true)
                         binding.progressBar.isVisible = false
 
                     }
@@ -159,6 +162,7 @@ class FavoriteFragment : Fragment(),MoviesPagingAdapter.Callback {
 
     override fun saveToFavorite(dto: MoviePageItemDto,  position:Int) {
 
+        currentPosition = position
 
         dto.id?.let {
 
